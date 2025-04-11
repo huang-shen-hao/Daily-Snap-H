@@ -1,0 +1,29 @@
+{
+  "extends": "@tsconfig/node18/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "esnext",
+    "target": "esnext",
+    "lib": ["esnext", "dom"],
+    "strict": true,
+    "esModuleInterop": true,
+    "jsx": "preserve",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "components/*": ["src/components/*"],
+      "views/*": ["src/views/*"],
+      "utils/*": ["src/utils/*"],
+      "types/*": ["types/*"]
+    },
+    "types": ["@dcloudio/types", "vite/client"]
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "types/**/*.d.ts", "src/utils/w_md5.js"],
+  "exclude": ["dist", "node_modules", "*.js", "*.cjs", "src/**/uni-data*/**", "src/router/*.ts"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
