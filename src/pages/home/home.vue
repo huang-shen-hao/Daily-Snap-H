@@ -1,7 +1,7 @@
 <template>
   <view class="container">
     <view class="header">
-      <text class="header-title">日常打卡</text>
+      <text class="header-title"></text>
     </view>
     <view class="card card1">
       <text class="card-title">打卡记录</text>
@@ -19,6 +19,8 @@
 </template>
 
 <script setup lang="ts">
+console.log('a', import.meta.env)
+
 // 这里可以添加逻辑代码
 </script>
 

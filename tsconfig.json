@@ -21,7 +21,7 @@
       "utils/*": ["src/utils/*"],
       "types/*": ["types/*"]
     },
-    "types": ["@dcloudio/types", "vite/client"]
+    "types": ["@dcloudio/types", "vite/client", "node"]
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "types/**/*.d.ts", "src/utils/w_md5.js"],
   "exclude": ["dist", "node_modules", "*.js", "*.cjs", "src/**/uni-data*/**", "src/router/*.ts"],
