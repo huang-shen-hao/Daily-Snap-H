@@ -6,6 +6,11 @@ import pluginVue from 'eslint-plugin-vue'
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 import eslintPluginImportX from 'eslint-plugin-import-x'
 
+import { readFile } from 'node:fs/promises'
+
+const autoImportFile = new URL('./.eslintrc-auto-import.json', import.meta.url)
+const autoImportGlobals = JSON.parse(await readFile(autoImportFile, 'utf8'))
+
 export default defineConfig([
   {
     ignores: ['node_modules', 'src/static/', '.vscode', '.husky']
@@ -28,7 +33,8 @@ export default defineConfig([
         uni: true,
         WechatMiniprogram: true,
         getCurrentPages: true,
-        UniHelper: true
+        UniHelper: true,
+        ...autoImportGlobals.globals
       }
     }
   },
