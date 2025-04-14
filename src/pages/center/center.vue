@@ -1,15 +1,10 @@
 <template>
   <view class="container"> </view>
-  <my-tab-bar :selected="0" />
+  <my-tab-bar :selected="1" />
 </template>
 
 <script setup lang="ts">
 import myTabBar from '@/components/my-tab-bar/index.vue'
-
-onLoad(() => {
-  // 页面加载时的逻辑
-  console.log('Home page loaded')
-})
 onShow(() => {
   uni.hideTabBar()
 })
@@ -21,9 +16,7 @@ onShow(() => {
   flex-direction: column;
   align-items: center;
 
-  height: 100vh;
-  /* 背景铺满屏幕 */
+  height: 100vh; /* 背景铺满屏幕 */
   padding: 20px;
-  // background-color: rgb(102, 161, 230);
 }
 </style>
