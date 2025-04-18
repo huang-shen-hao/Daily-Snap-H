@@ -1,5 +1,11 @@
 module.exports = [
   {
+    path: 'pages/register/register',
+    style: {
+      navigationBarTitleText: '注册'
+    }
+  },
+  {
     path: 'pages/home/home',
     style: {
       navigationBarTitleText: '首页'

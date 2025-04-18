@@ -4,7 +4,7 @@ import pluginJs from '@eslint/js'
 import { configs, parser } from 'typescript-eslint'
 import pluginVue from 'eslint-plugin-vue'
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
-import eslintPluginImportX from 'eslint-plugin-import-x'
+// import eslintPluginImportX from 'eslint-plugin-import-x'
 
 import { readFile } from 'node:fs/promises'
 
@@ -22,6 +22,9 @@ export default defineConfig([
       parser: parser,
       ecmaVersion: 'latest',
       sourceType: 'module'
+    },
+    rules: {
+      'no-shadow': 'off'
     }
   },
   {
@@ -56,6 +59,7 @@ export default defineConfig([
   },
   {
     rules: {
+      'no-shadow': 'off',
       'linebreak-style': ['off', 'lf'], // 换行符
       quotes: ['error', 'double'], // 使用双引号
       eqeqeq: ['error', 'smart'], // 比较的时候使用严格等于
@@ -75,7 +79,6 @@ export default defineConfig([
       'no-const-assign': 'error', // 禁止修改const声明的变量
       'no-redeclare': 'error', // 禁止重复声明变量
       'no-func-assign': 'error', // 禁止重复的函数声明
-      'no-shadow': 'error', // 外部作用域中的变量不能与它所包含的作用域中的变量或参数同名
       // 空格
       'space-infix-ops': ['error', { int32Hint: true }], // 操作符周围的空格
       'space-before-function-paren': ['error', { anonymous: 'never', named: 'never', asyncArrow: 'always' }], // 函数定义时括号前的空格
@@ -126,7 +129,7 @@ export default defineConfig([
     }
   },
 
-  eslintPluginImportX.flatConfigs.recommended,
-  eslintPluginImportX.flatConfigs.typescript,
+  // eslintPluginImportX.flatConfigs.recommended,
+  // eslintPluginImportX.flatConfigs.typescript,
   eslintPluginPrettierRecommended
 ])
