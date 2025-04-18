@@ -20,6 +20,8 @@
     "@dcloudio/uni-components": "3.0.0-3090920231225001",
     "@dcloudio/uni-mp-weixin": "3.0.0-3090920231225001",
     "@tsconfig/node18": "2.0.1",
+    "pinia": "2.0.22",
+    "pinia-plugin-persistedstate": "3.2.1",
     "postcss-html": "^1.8.0",
     "sass": "^1.86.3",
     "typescript": "5.0.4",
