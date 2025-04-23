@@ -1,5 +1,11 @@
 {
 "pages": /* #exec hotJs('./router/routerPages.ts') */,
+"easycom": {
+		"autoscan": true,
+		"custom": {
+			"^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
+		}
+	},
 "globalStyle": {
   "navigationBarTextStyle": "black",
   "navigationBarTitleText": "uni-app",

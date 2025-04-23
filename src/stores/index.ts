@@ -1,15 +1,20 @@
-// stores/counter.js
-import { defineStore } from 'pinia'
+import { createPinia } from 'pinia' //引入pinia
 
-export const useCounterStore = defineStore('counter', {
-  state: () => {
-    return { count: 0 }
-  },
-  // 也可以这样定义
-  // state: () => ({ count: 0 })
-  actions: {
-    increment() {
-      this.count++
+import { createPersistedState } from 'pinia-plugin-persistedstate'
+
+const pinia = createPinia() //创建pinia实例
+
+pinia.use(
+  createPersistedState({
+    storage: {
+      getItem(key: string) {
+        return <string | null>uni.getStorageSync(key)
+      },
+      setItem(key: string, value: string) {
+        uni.setStorageSync(key, value)
+      }
     }
-  }
-})
+  })
+) //将插件添加到 pinia 实例上
+
+export default pinia //导出pinia用于main.js注册

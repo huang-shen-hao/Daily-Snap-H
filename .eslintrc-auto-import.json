@@ -106,6 +106,10 @@
     "watchEffect": true,
     "watchPostEffect": true,
     "watchSyncEffect": true,
-    "useCounterStore": true
+    "useCounterStore": true,
+    "userStore": true,
+    "stores": true,
+    "user": true,
+    "GD_KEY": true
   }
 }

@@ -1,5 +1,11 @@
 module.exports = [
   {
+    path: 'pages/login/login',
+    style: {
+      navigationBarTitleText: '登录'
+    }
+  },
+  {
     path: 'pages/register/register',
     style: {
       navigationBarTitleText: '注册'
@@ -20,7 +26,7 @@ module.exports = [
   {
     path: 'pages/my/my',
     style: {
-      navigationBarTitleText: '我的'
+      navigationStyle: 'custom' //禁用uni-app默认的头部导
     }
   }
 ]
