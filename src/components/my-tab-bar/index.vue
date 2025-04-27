@@ -24,7 +24,7 @@ const tabbarList = [
   },
   {
     id: 2,
-    pagePath: '/pages/center/center',
+    pagePath: '/pages/square/square',
     text: '广场',
     iconPath: '../../static/image/center_before.svg',
     selectedIconPath: '../../static/image/center_after.svg'
@@ -56,38 +56,45 @@ const changeTabbar = (path: string) => {
 .custom-tab-bar {
   position: fixed;
   bottom: 0;
+
   // bottom: calc(30rpx + constant(safe-area-inset-bottom));
   // bottom: calc(30rpx + env(safe-area-inset-bottom));
   left: 0;
   right: 0;
+
   .main {
     // width: calc(100% - 48rpx);
     width: 100%;
     height: 120rpx;
     background-color: #fff;
+
     // background: rgba(255, 255, 255, 0.65);
     // box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
     // backdrop-filter: blur(5px);
     // -webkit-backdrop-filter: blur(5px);
     // border-radius: 10px;
-    border-top: 1px solid rgb(202, 202, 202);
+    border-top: 1px solid rgb(202 202 202);
     display: flex;
     align-items: center;
     justify-content: space-around;
     margin: 0 auto;
+
     // border-radius: 60rpx;
     padding-bottom: calc(10rpx + constant(safe-area-inset-bottom));
     padding-bottom: calc(10rpx + env(safe-area-inset-bottom));
+
     .tab-bar-item {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+
       .icon {
         width: 40rpx;
         height: 40rpx;
         margin-bottom: 6rpx;
       }
+
       .text {
         font-size: 24rpx;
         color: #333;

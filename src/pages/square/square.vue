@@ -24,12 +24,24 @@
         <view class="content"> {{ item.content }}</view>
         <view class="tools">
           <image calss="like" src="https://iili.io/3VyQCrP.png" mode="scaleToFill" />
-          <image calss="comment" src="https://iili.io/3VyQBEB.png" mode="scaleToFill" />
+          <image
+            calss="comment"
+            src="https://iili.io/3VyQBEB.png"
+            @click="openBox(item.puid, item.users_permissions_user.username)"
+            mode="scaleToFill"
+          />
         </view>
       </view>
 
       <CommentItem :child-list="item.child" @reply="refresh" @delete="refresh" />
     </view>
+
+    <!-- 评论框 -->
+    <uni-popup ref="popRef" type="dialog">
+      <uni-popup-dialog value="" ref="inputClose" :title="`回复${replyName}`" @confirm="submitReply">
+        <uni-easyinput type="textarea" v-model="text" placeholder="请输入内容"></uni-easyinput>
+      </uni-popup-dialog>
+    </uni-popup>
 
     <view class="add" @click="toAddPage"> 发帖 </view>
   </view>
@@ -39,7 +51,7 @@
 <script setup lang="ts">
 import myTabBar from '@/components/my-tab-bar/index.vue'
 import CommentItem from '@/components/comment-item/index.vue'
-import { getPostList, deletePostByPuid } from '@/utils/api'
+import { getPostList, deletePostByPuid, replyPost } from '@/utils/api'
 import userStore from '@/stores/user'
 
 const user = userStore()
@@ -86,6 +98,33 @@ const deletePost = async (puid: string) => {
     }
   })
 }
+
+// 回复的id
+const puid = ref<string>('')
+const text = ref<string>('')
+// 回复谁
+const replyName = ref<string>('')
+const popRef = ref()
+
+const openBox = (id: string, username: string) => {
+  puid.value = id
+  replyName.value = username
+  console.log('sssss', puid.value, replyName.value)
+  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+  popRef.value && popRef.value.open('center')
+}
+
+const submitReply = async () => {
+  const auth = user.userInfo.id
+  const res = await replyPost(text.value, puid.value, auth)
+  if (res.code === 0) {
+    uni.showToast({
+      title: '回复成功',
+      icon: 'success'
+    })
+    await getList()
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -113,6 +152,7 @@ const deletePost = async (puid: string) => {
     color: #fff;
     font-weight: 600;
   }
+
   .fa {
     width: 100%;
     border-radius: 20rpx;
@@ -127,8 +167,9 @@ const deletePost = async (puid: string) => {
       justify-content: flex-start;
       padding: 20rpx;
       box-sizing: border-box;
-      border-bottom: 2rpx solid rgb(206, 206, 206);
+      border-bottom: 2rpx solid rgb(206 206 206);
       position: relative;
+
       .delete {
         width: 30rpx;
         height: 30rpx;
@@ -137,30 +178,34 @@ const deletePost = async (puid: string) => {
         top: 50%;
         transform: translateY(-50%);
       }
+
       .avatar {
         width: 90rpx;
         height: 90rpx;
         border-radius: 50%;
         overflow: hidden;
         margin-right: 20rpx;
+
         image {
           width: 100%;
           height: 100%;
         }
       }
+
       .info-detail {
         width: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
         font-size: 30px;
+
         // will-change: transform;
         .name {
-          font-size: 30rpx;
-          color: #000000;
+          color: #000;
           font-size: 500;
           margin-bottom: 8rpx;
         }
+
         .time {
           font-size: 24rpx;
           color: #333;
@@ -176,29 +221,35 @@ const deletePost = async (puid: string) => {
       flex-direction: column;
       padding: 20rpx;
       box-sizing: border-box;
-      border-bottom: 2rpx solid rgb(206, 206, 206);
+      border-bottom: 2rpx solid rgb(206 206 206);
+
       .title,
       .content {
         width: 100%;
         text-align: left;
       }
+
       .title {
         font-size: 32rpx;
         font-weight: 600;
         color: #000;
         margin-bottom: 10rpx;
       }
+
       .content {
         font-size: 28rpx;
         color: #666;
+
         // text-indent: 2rem;
       }
+
       .tools {
         width: 100%;
         display: flex;
         align-items: center;
         justify-content: flex-end;
         margin-top: 30rpx;
+
         image {
           width: 40rpx;
           height: 40rpx;
@@ -206,8 +257,10 @@ const deletePost = async (puid: string) => {
         }
       }
     }
+
     .comment-area {
       width: 100%;
+
       .comment-item {
         display: flex;
         align-items: flex-start;
@@ -223,29 +276,32 @@ const deletePost = async (puid: string) => {
         background-color: red;
         overflow: hidden;
         margin-right: 20rpx;
+
         image {
           width: 100%;
           height: 100%;
         }
       }
+
       .info-detail {
         width: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
         font-size: 30px;
+
         .name {
-          font-size: 24rpx;
-          color: #000000;
+          color: #000;
           font-size: 500;
           margin-bottom: 8rpx;
         }
+
         .content {
           font-size: 18rpx;
           color: #333;
-
           margin-bottom: 8rpx;
         }
+
         .time {
           font-size: 18rpx;
           color: #333;
