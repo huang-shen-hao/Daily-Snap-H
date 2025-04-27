@@ -73,13 +73,13 @@ export const login = (param: LoginForm) => {
 // 用户登录 -> 首页 -> 存用户信息
 export const loginAndsaveUserInfo = async (param: LoginForm) => {
   const result = await login(param)
+  console.log('登录结果：', result)
   if (result.code === 0) {
     const { data, jwt } = result.data
-    console.log('表单数据信息：', data, jwt)
-    const { id, email, username, avatar } = data
+    const { documentId, email, username, avatar } = data
     user.$patch({
       userInfo: {
-        id,
+        id: documentId,
         email,
         username,
         avatar
@@ -94,8 +94,13 @@ export const loginAndsaveUserInfo = async (param: LoginForm) => {
     setTimeout(() => {
       uni.switchTab({ url: '/pages/my/my' })
     }, 3000)
-
-    console.log('用户信息：', user.userInfo)
+  } else {
+    const { message } = result
+    uni.showToast({
+      title: message,
+      icon: 'none',
+      duration: 2000
+    })
   }
 }
 
@@ -110,9 +115,67 @@ export const getWeather = (param: weatherForm) => {
       },
       data: {
         ...param
-      },
-      isNormal: false
+      }
     },
     'http://apis.juhe.cn/'
   )
+}
+
+// 获取帖子列表
+export const getPostList = () => {
+  return request({
+    url: 'api/ds-post/posts?page=1&pageSize=10',
+    method: 'GET',
+    header: {
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    }
+  })
+}
+
+// 回复贴
+export const replyPost = (content: string, pid: string, author: string) => {
+  return request({
+    url: 'api/ds-post/add',
+    method: 'POST',
+    header: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    },
+    data: {
+      content,
+      pid,
+      author,
+      type: 'reply'
+    }
+  })
+}
+
+// 删除贴
+export const deletePostByPuid = (puid: string) => {
+  return request({
+    url: `api/ds-post/delete?puid=${puid}`,
+    method: 'DELETE',
+    fullRes: true,
+    header: {
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    }
+  })
+}
+
+// 发贴
+export const addPost = (title: string, content: string, author: string) => {
+  return request({
+    url: `api/ds-post/add`,
+    method: 'POST',
+    fullRes: true,
+    header: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    },
+    data: {
+      title,
+      content,
+      author
+    }
+  })
 }

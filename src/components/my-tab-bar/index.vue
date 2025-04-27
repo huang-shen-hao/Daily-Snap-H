@@ -24,6 +24,13 @@ const tabbarList = [
   },
   {
     id: 2,
+    pagePath: '/pages/center/center',
+    text: '广场',
+    iconPath: '../../static/image/center_before.svg',
+    selectedIconPath: '../../static/image/center_after.svg'
+  },
+  {
+    id: 3,
     pagePath: '/pages/my/my',
     iconPath: '../../static/image/my_before.svg',
     selectedIconPath: '../../static/image/my_after.svg',

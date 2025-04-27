@@ -26,7 +26,6 @@ export const request = <T = AnyObject>(requestConfig: RequestConfig, customBaseU
       header: {
         ...defaultHeaders
       },
-      isNormal: true,
       ...requestConfig,
       url: `${customBaseUrl}${requestConfig.url}`,
       method,
@@ -52,11 +51,9 @@ export const request = <T = AnyObject>(requestConfig: RequestConfig, customBaseU
           }, 2000)
         }
         if (statusCode === CODE_200 || statusCode === CODE_0) {
-          if (requestConfig.isNormal) {
-            return resolve(<T>(requestConfig.fullRes ? data : data.data))
-          } else {
-            return resolve(<T>(requestConfig.fullRes ? data : data.result))
-          }
+          console.log('封装的', data)
+          if (data.result) return resolve(<T>data.result)
+          return resolve(<T>(requestConfig.fullRes ? data : data.data))
         } else {
           reject(res)
         }

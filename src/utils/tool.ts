@@ -1,13 +1,13 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import { GD_KEY } from '@/constant/index' //这个就是你在第一步申请的key值
 import AMapWX from '@/static/amap-wx.130.js'
-
-const myAmapFun = new AMapWX({
-  key: GD_KEY
-})
 
 // 高德地图逆向经纬度
 export const wxGetAddress = (longitude: number, latitude: number) => {
   //创建一个实例化对象
+  const myAmapFun = new AMapWX({
+    key: GD_KEY
+  })
 
   //根据传递进来经纬度进行反解析，调用的是高德给的方法
   return new Promise(resolve => {
@@ -48,3 +48,5 @@ export const getAddress = () => {
 export const removeArea = (address: string) => {
   return address.replace(/(区|县|市)/g, '')
 }
+
+// 时间格式转换 createdAt: "2025-04-25T09:18:17.204Z" 例如2025-04-25 09:18:17

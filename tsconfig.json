@@ -30,9 +30,7 @@
     "src/**/*.vue",
     "types/**/*.d.ts",
     "src/utils/w_md5.js",
-    "./types/auto-imports.d.ts",
-    "src/static/amap-wx.130.js",
-    "src/utils/address.js"
+    "./types/auto-imports.d.ts"
   ],
   "exclude": ["dist", "node_modules", "*.js", "*.cjs", "src/**/uni-data*/**", "src/router/*.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]

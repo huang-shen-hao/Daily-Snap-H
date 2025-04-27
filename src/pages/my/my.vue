@@ -29,7 +29,7 @@
       </view>
     </view>
   </view>
-  <my-tab-bar :selected="2" />
+  <my-tab-bar :selected="3" />
 </template>
 
 <script setup lang="ts">
@@ -77,9 +77,9 @@ const funList = [
   }
 ]
 
-const province = ref<string>('浙江省')
-const city = ref<string>('杭州市')
-const district = ref<string>('西湖区')
+const province = ref<string>('***')
+const city = ref<string>('***')
+const district = ref<string>('***')
 
 const realWeather = ref<realWeatherType>({
   aqi: '',

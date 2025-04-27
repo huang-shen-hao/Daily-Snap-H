@@ -7,12 +7,33 @@ const registerForm = reactive({
   code: ''
 })
 
+const rules = reactive({
+  username: [{ required: true, errorMessage: '请输入昵称', trigger: 'blur' }],
+  email: {
+    rules: [
+      { required: true, errorMessage: '请输入邮箱', trigger: 'blur' },
+      {
+        validateFunction: function (rule: any, value: any, data: any, callback: any) {
+          // eslint-disable-next-line no-useless-escape
+          let emailReg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/
+          if (!emailReg.test(value)) {
+            callback('邮箱格式不正确，请重新填写')
+          }
+        }
+      }
+    ]
+  },
+  code: [{ required: true, errorMessage: '请输入', trigger: 'blur' }],
+  password: {
+    rules: [
+      { required: true, errorMessage: '请输入密码', trigger: 'blur' },
+      { min: 6, max: 16, errorMessage: '密码长度在6-16位之间', trigger: ['blur', 'change'] }
+    ]
+  }
+})
+
 // 是否发二维码的tag
 const codeTag = ref<boolean>(true)
-
-const showpassword = ref(true)
-const eyeL = 'https://trial-cdn.esign.cn/upload/2a13ebbb-ee95-54eb-8f9a-b0886b800cf5!!4-17.png'
-const eyeG = 'https://trial-cdn.esign.cn/upload/bc31081d-8e84-5c13-924c-48216557b8e5!!4-17.png'
 
 const getCode = async () => {
   const regx = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
@@ -43,7 +64,7 @@ const getCode = async () => {
   }
 }
 
-const submit = () => {
+const register = () => {
   if (!registerForm.username) {
     return uni.showToast({
       title: '请先输入昵称',
@@ -90,138 +111,264 @@ const submit = () => {
   }
   registerAndsaveUserInfo(registerForm)
 }
-
-const changeEye = () => {
-  showpassword.value = !showpassword.value
-}
 </script>
 <template>
-  <view class="register-con">
-    <view class="register-dialog">
-      <view class="input-row">
-        <view class="input-label">昵称</view>
-        <input class="uni-input" v-model="registerForm.username" />
-      </view>
+  <view class="login-con" @touchmove.stop.prevent="() => {}">
+    <view class="header-img">
+      <image
+        class="img"
+        src="https://trial-cdn.esign.cn/upload/304e1190-5d8a-57a2-8537-cd4871ef77ad!!4-24.png"
+        mode="scaleToFill"
+      />
+    </view>
+    <view class="login-form">
+      <view class="main">
+        <view class="welcome">欢迎来到</view>
 
-      <view class="input-row">
-        <view class="input-label">邮箱</view>
-        <input class="uni-input" v-model="registerForm.email" />
-      </view>
+        <uni-forms ref="formRef" :modelValue="registerForm" :rules="rules">
+          <view class="form-item">
+            <view class="label">昵称</view>
+            <uni-forms-item name="username">
+              <uni-easyinput v-model="registerForm.username" placeholder="请输入昵称" :clearable="false">
+              </uni-easyinput>
+            </uni-forms-item>
+          </view>
 
-      <view class="input-row">
-        <view class="input-label">密码</view>
-        <input class="uni-input password" :password="showpassword" v-model="registerForm.password" />
-        <image :src="!showpassword ? eyeL : eyeG" @touchend="changeEye" class="eye" />
-      </view>
+          <view class="form-item">
+            <view class="label">邮箱</view>
+            <uni-forms-item name="email">
+              <uni-easyinput v-model="registerForm.email" placeholder="请输入邮箱" :clearable="false"> </uni-easyinput>
+            </uni-forms-item>
+          </view>
 
-      <view class="code-row">
-        <input class="code-input" placeholder="验证码" v-model="registerForm.code" />
-        <button @click="getCode" class="code-btn">获取验证码</button>
-      </view>
+          <view class="form-item">
+            <view class="label">密码</view>
 
-      <button class="register-btn" @click="submit">立即注册</button>
+            <uni-forms-item name="password">
+              <uni-easyinput v-model="registerForm.password" placeholder="请输入密码" :clearable="false">
+              </uni-easyinput>
+            </uni-forms-item>
+          </view>
+
+          <view class="form-item code">
+            <uni-forms-item name="code">
+              <uni-easyinput v-model="registerForm.code" placeholder="请输入验证码" :clearable="false"> </uni-easyinput>
+            </uni-forms-item>
+
+            <view class="label" @click="getCode">获取验证码</view>
+          </view>
+
+          <view class="opt">
+            <button @click="register">注册</button>
+          </view>
+        </uni-forms>
+      </view>
     </view>
   </view>
 </template>
-<style lang="scss" scoped>
-.register-con {
+<style scoped lang="scss">
+.login-con {
   width: 100%;
   height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background: linear-gradient(180deg, #fffa9e 13%, #e5f0ff 100%);
 
-  .register-dialog {
-    width: calc(100% - 80rpx);
-    box-sizing: border-box;
-    padding: 40rpx;
-    background: #fff;
-    border-radius: 20rpx;
-    box-shadow: 0 3px 10px rgb(0 0 0 / 10%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  padding-top: 114rpx;
+  padding-left: 24rpx;
+  position: relative;
+
+  .header-img {
+    position: relative;
+    z-index: 9;
+    width: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
-    flex-direction: column;
+    justify-content: flex-end;
+    .img {
+      width: 670rpx;
+      height: 484rpx;
+    }
+  }
+  .login-form {
+    width: 100%;
+    position: relative;
+    margin-top: 24rpx;
 
-    .input-row {
+    &::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 51%;
+      transform: translate(-50%, -50%);
+      rotate: 2deg;
+      transform-origin: center;
+      width: 756rpx;
+      height: 931rpx;
+      background: #f4ed62;
+      border-radius: 56rpx 0rpx 0rpx 56rpx;
+    }
+    .main {
       width: 100%;
-
-      .input-label {
-        font-size: 28rpx;
-        color: #333;
-        margin-bottom: 10rpx;
-      }
-
+      height: 920rpx;
+      border-radius: 56rpx 0rpx 0rpx 56rpx;
+      background: #fff;
       position: relative;
+      z-index: 9;
+      box-sizing: border-box;
+      padding-top: 63rpx;
+      padding-left: 48rpx;
+      z-index: 9;
+    }
 
-      .eye {
-        width: 60rpx;
-        height: 50rpx;
+    .welcome {
+      position: relative;
+      font-family:
+        Alibaba PuHuiTi,
+        Alibaba PuHuiTi;
+      font-weight: 800;
+      font-size: 64rpx;
+      color: #333333;
+      text-align: left;
+      font-style: normal;
+      text-transform: none;
+      &::after {
+        content: '';
+        width: 318rpx;
+        height: 65rpx;
+        background-image: url('https://iili.io/3McNYIR.png');
+        background-size: cover;
         position: absolute;
-        right: 16rpx;
-        top: 59%;
+        left: 270rpx;
+        top: 50%;
         transform: translateY(-50%);
       }
     }
-
-    .uni-input {
-      width: 100%;
-      height: 100rpx;
-      line-height: 100rpx;
-      border: 1px solid #ccc;
-      border-radius: 12rpx;
-      box-sizing: border-box;
-      padding: 0 16rpx;
-      margin-bottom: 20rpx;
-    }
-
-    .code-row {
-      width: 100%;
+    .form-item {
       display: flex;
       align-items: center;
-      justify-content: center;
-
-      .code-input {
-        flex-basis: 70%;
-        height: 100rpx;
-        line-height: 100rpx;
+      justify-content: space-between;
+      margin-top: 40rpx;
+      padding-right: 48rpx;
+      .label {
+        width: 135rpx;
+        height: 96rpx;
+        background: #f6f6f6;
+        border-radius: 60rpx 20rpx 20rpx 60rpx;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family:
+          Alibaba PuHuiTi,
+          Alibaba PuHuiTi;
+        font-weight: bold;
+        font-size: 32rpx;
+        color: #333333;
+        line-height: 56rpx;
+        text-align: left;
+        font-style: normal;
+        text-transform: none;
         box-sizing: border-box;
-        border: 1px solid #ccc;
-        padding: 0 16rpx;
-        border-top-left-radius: 12rpx;
-        border-bottom-left-radius: 12rpx;
+        padding-left: 8rpx;
       }
 
-      .code-btn {
-        font-size: 24rpx;
-        flex-basis: 30%;
-        height: 100rpx;
-        line-height: 100rpx;
-        border: none;
-        border-radius: 0 12rpx 12rpx 0 !important;
-        color: #fff;
-        background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+      :deep(.uni-forms-item) {
+        margin-bottom: 0;
+      }
+      :deep(.uni-easyinput),
+      :deep(.uni-easyinput__content) {
+        width: 455rpx;
+        height: 96rpx;
+        padding: 0 !important;
+        border-radius: 20rpx 60rpx 60rpx 20rpx;
+        input {
+          width: 455rpx;
+          height: 92rpx;
+          border-radius: 20rpx 60rpx 60rpx 20rpx;
+          background: #f6f6f6;
 
-        &::after {
-          content: '';
-          border: none;
+          padding-left: 32rpx;
+          &::placeholder {
+            font-family:
+              PingFang SC,
+              PingFang SC;
+            font-weight: 400;
+            font-size: 28rpx;
+            color: #999999;
+            line-height: 56rpx;
+            text-align: left;
+            font-style: normal;
+            text-transform: none;
+          }
         }
       }
     }
+    .form-item.code {
+      :deep(.uni-easyinput),
+      :deep(.uni-easyinput__content) {
+        width: 388rpx;
+        height: 96rpx;
+        background: #f6f6f6;
+        border-radius: 60rpx 60rpx 60rpx 60rpx;
+        input {
+          width: 388rpx;
+          height: 96rpx;
+          background: #f6f6f6;
+          border-radius: 60rpx 60rpx 60rpx 60rpx;
 
-    .register-btn {
-      width: 100%;
-      height: 100rpx;
-      margin-top: 30rpx;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #fff;
-      background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
-
-      &::after {
-        content: '';
-        border: none;
+          padding-left: 40rpx;
+          &::placeholder {
+            font-family:
+              PingFang SC,
+              PingFang SC;
+            font-weight: 400;
+            font-size: 28rpx;
+            color: #999999;
+            line-height: 56rpx;
+            text-align: left;
+            font-style: normal;
+            text-transform: none;
+          }
+        }
+      }
+      .label {
+        width: 202rpx;
+        height: 96rpx;
+        background: #f6f6f6;
+        border-radius: 60rpx;
+        font-family:
+          Alibaba PuHuiTi,
+          Alibaba PuHuiTi;
+        font-weight: 400;
+        font-size: 28rpx;
+        color: #da9000;
+        line-height: 56rpx;
+        text-align: left;
+        font-style: normal;
+        text-transform: none;
+      }
+    }
+    .opt {
+      margin-top: 40rpx;
+      button {
+        width: 615rpx;
+        height: 120rpx;
+        background: #f9f26d;
+        border-radius: 60rpx 60rpx 60rpx 60rpx;
+        font-family:
+          Alibaba PuHuiTi,
+          Alibaba PuHuiTi;
+        font-weight: 800;
+        font-size: 32rpx;
+        color: #333333;
+        font-style: normal;
+        text-transform: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
     }
   }

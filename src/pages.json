@@ -29,6 +29,12 @@
       "text": "中心"
     },
     {
+      "pagePath": "pages/square/square",
+      "iconPath": "static/image/center_before.png",
+      "selectedIconPath": "static/image/center_after.png",
+      "text": "广场"
+    },
+    {
       "pagePath": "pages/my/my",
       "iconPath": "static/image/my_before.png",
       "selectedIconPath": "static/image/my_after.png",
