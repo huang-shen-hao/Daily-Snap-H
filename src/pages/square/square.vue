@@ -8,7 +8,7 @@
 
         <view class="info-detail">
           <view class="name">{{ item.users_permissions_user.username }}</view>
-          <view class="time">2025-04-27</view>
+          <view class="time">{{ formatTime(item.createdAt) }}</view>
         </view>
 
         <image
@@ -51,6 +51,7 @@ import CommentPop from '@/components/comment-pop/index.vue'
 import { getPostList, deletePostByPuid } from '@/utils/api'
 import { ICommentItem } from '@/utils/interface'
 import globalStore from '@/stores/global'
+import { formatTime } from '@/utils/tool'
 
 const global = globalStore()
 
@@ -177,12 +178,12 @@ const openBox = (id: string, username: string) => {
         display: flex;
         flex-direction: column;
         justify-content: center;
-        font-size: 30px;
 
         // will-change: transform;
         .name {
           color: #000;
-          font-size: 500;
+          font-size: 30rpx;
+          font-weight: 600;
           margin-bottom: 8rpx;
         }
 
@@ -210,15 +211,14 @@ const openBox = (id: string, username: string) => {
       }
 
       .title {
-        font-size: 32rpx;
-        font-weight: 600;
+        font-size: 28rpx;
         color: #000;
         margin-bottom: 10rpx;
       }
 
       .content {
-        font-size: 28rpx;
-        color: #666;
+        font-size: 24rpx;
+        color: #999;
 
         // text-indent: 2rem;
       }

@@ -143,11 +143,11 @@ const deletePost = async (puid: string) => {
       display: flex;
       flex-direction: column;
       justify-content: center;
-      font-size: 30px;
 
       .name {
         color: #000;
         font-size: 500;
+        font-size: 24rpx;
         margin-bottom: 8rpx;
       }
 
