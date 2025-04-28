@@ -73,8 +73,8 @@ const deletePost = async (puid: string) => {
             <view class="name" @click="openBox(item.puid, item.users_permissions_user.username)">{{
               item.users_permissions_user.username
             }}</view>
-            <view class="content" @click="openBox(item.puid, item.users_permissions_user.username)"
-              >回复@{{ replyUserName }}： {{ item.content }}</view
+            <view class="content" @click="openBox(item.puid, item.users_permissions_user.username)">
+              <text v-if="isTab">回复@{{ replyUserName }}：</text> {{ item.content }}</view
             >
             <view class="time" v-show="showTime">
               <text>{{ formatTime(item.createdAt) }}</text>

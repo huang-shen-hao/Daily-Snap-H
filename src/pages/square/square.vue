@@ -8,16 +8,17 @@
 
         <view class="info-detail">
           <view class="name">{{ item.users_permissions_user.username }}</view>
-          <view class="time">{{ formatTime(item.createdAt) }}</view>
+          <view class="time">
+            <text>{{ formatTime(item.createdAt) }}</text>
+            <image
+              class="delete"
+              @click="deletePost(item.puid)"
+              v-if="item.users_permissions_user.username === global.userInfo.username"
+              src="https://iili.io/3WJstv1.png"
+              mode="scaleToFill"
+            />
+          </view>
         </view>
-
-        <image
-          class="delete"
-          @click="deletePost(item.puid)"
-          v-if="item.users_permissions_user.username === global.userInfo.username"
-          src="https://iili.io/3WJstv1.png"
-          mode="scaleToFill"
-        />
       </view>
       <view class="info-contain">
         <view class="title"> {{ item.title }}</view>
@@ -188,8 +189,23 @@ const openBox = (id: string, username: string) => {
         }
 
         .time {
-          font-size: 24rpx;
+          width: 100%;
+          padding: 6rpx 0;
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          font-size: 18rpx;
           color: #333;
+          position: relative;
+
+          .delete {
+            width: 20rpx;
+            height: 20rpx;
+            position: absolute;
+            left: 200rpx;
+            top: 50%;
+            transform: translateY(-50%);
+          }
         }
       }
     }
