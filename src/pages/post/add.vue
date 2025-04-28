@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { addPost } from '@/utils/api'
-import userStore from '@/stores/user'
-const user = userStore()
+import globalStore from '@/stores/global'
+const global = globalStore()
 
 const title = ref('')
 const content = ref('')
@@ -12,7 +12,7 @@ const submit = () => {
     content: '是否发布',
     success: async ({ confirm }) => {
       if (confirm) {
-        const res = await addPost(title.value, content.value, user.userInfo.id)
+        const res = await addPost(title.value, content.value, global.userInfo.id)
         console.log(res)
         uni.navigateBack()
       }
@@ -38,9 +38,9 @@ const submit = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-
   height: 100vh; /* 背景铺满屏幕 */
   padding: 20px;
+
   .row {
     width: 100%;
   }

@@ -14,7 +14,7 @@
         <image
           class="delete"
           @click="deletePost(item.puid)"
-          v-if="item.users_permissions_user.username === user.userInfo.username"
+          v-if="item.users_permissions_user.username === global.userInfo.username"
           src="https://iili.io/3WJstv1.png"
           mode="scaleToFill"
         />
@@ -33,15 +33,11 @@
         </view>
       </view>
 
-      <CommentItem :child-list="item.child" @reply="refresh" @delete="refresh" />
+      <CommentBox :child-list="item.child" :reply-user-name="item.users_permissions_user.username" @delete="refresh" />
     </view>
 
     <!-- 评论框 -->
-    <uni-popup ref="popRef" type="dialog">
-      <uni-popup-dialog value="" ref="inputClose" :title="`回复${replyName}`" @confirm="submitReply">
-        <uni-easyinput type="textarea" v-model="text" placeholder="请输入内容"></uni-easyinput>
-      </uni-popup-dialog>
-    </uni-popup>
+    <CommentPop v-show="global.showCommentDialog" @comfirm="refresh" />
 
     <view class="add" @click="toAddPage"> 发帖 </view>
   </view>
@@ -50,13 +46,15 @@
 
 <script setup lang="ts">
 import myTabBar from '@/components/my-tab-bar/index.vue'
-import CommentItem from '@/components/comment-item/index.vue'
-import { getPostList, deletePostByPuid, replyPost } from '@/utils/api'
-import userStore from '@/stores/user'
+import CommentBox from '@/components/comment-box/index.vue'
+import CommentPop from '@/components/comment-pop/index.vue'
+import { getPostList, deletePostByPuid } from '@/utils/api'
+import { ICommentItem } from '@/utils/interface'
+import globalStore from '@/stores/global'
 
-const user = userStore()
+const global = globalStore()
 
-const list = ref<any[]>([])
+const list = ref<ICommentItem[]>([])
 
 const getList = async () => {
   const res = await getPostList()
@@ -99,31 +97,13 @@ const deletePost = async (puid: string) => {
   })
 }
 
-// 回复的id
-const puid = ref<string>('')
-const text = ref<string>('')
-// 回复谁
-const replyName = ref<string>('')
-const popRef = ref()
-
 const openBox = (id: string, username: string) => {
-  puid.value = id
-  replyName.value = username
-  console.log('sssss', puid.value, replyName.value)
-  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  popRef.value && popRef.value.open('center')
-}
-
-const submitReply = async () => {
-  const auth = user.userInfo.id
-  const res = await replyPost(text.value, puid.value, auth)
-  if (res.code === 0) {
-    uni.showToast({
-      title: '回复成功',
-      icon: 'success'
-    })
-    await getList()
+  const param = {
+    puid: id,
+    commentReplyName: username
   }
+  global.setCommentInfo(param)
+  global.openCommentDialog(username)
 }
 </script>
 

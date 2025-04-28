@@ -1,8 +1,8 @@
 import { request } from './request'
 import { LoginForm, registerForm, weatherForm } from './interface'
-import userStore from '../stores/user'
+import globalStore from '../stores/global'
 
-const user = userStore()
+const global = globalStore()
 // 邮箱验证码发送
 export const sendEmailCode = (email: string) => {
   return request({
@@ -77,7 +77,7 @@ export const loginAndsaveUserInfo = async (param: LoginForm) => {
   if (result.code === 0) {
     const { data, jwt } = result.data
     const { documentId, email, username, avatar } = data
-    user.$patch({
+    global.$patch({
       userInfo: {
         id: documentId,
         email,

@@ -34,13 +34,13 @@
 
 <script setup lang="ts">
 import myTabBar from '@/components/my-tab-bar/index.vue'
-import userStore from '@/stores/user'
+import globalStore from '@/stores/global'
 import { getAddress, removeArea } from '@/utils/tool'
 import { getWeather } from '@/utils/api'
 import { type realWeatherType } from '@/utils/interface'
-const user = userStore()
+const global = globalStore()
 
-const { username, email, avatar } = toRefs(user.userInfo) // 响应式
+const { username, email, avatar } = toRefs(global.userInfo) // 响应式
 
 const userInfo = uni.getStorageSync('user')
 
@@ -124,6 +124,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   position: relative;
+
   .title {
     font-size: 32rpx;
     font-weight: bold;
@@ -137,32 +138,38 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 80rpx 24rpx 0 24rpx;
+  padding: 80rpx 24rpx 0;
   box-sizing: border-box;
   background: url('https://trial-cdn.esign.cn/upload/fe974d00-9025-5a3d-87a0-feacf470df55!!4-22.png') no-repeat center;
   background-size: cover;
+
   .info {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: flex-start;
+
     .image-content {
       width: 160rpx;
       height: 160rpx;
       border-radius: 50%;
       overflow: hidden;
+
       .avatar {
         width: 100%;
         height: 100%;
       }
     }
+
     .user-info {
       margin-left: 20rpx;
+
       .username {
         font-size: 32rpx;
         font-weight: 600;
         color: #333;
         margin-bottom: 8rpx;
+
         // padding-left: 36rpx;
         //   position: relative;
         //   &::before {
@@ -199,6 +206,7 @@ onMounted(() => {
           background-size: cover;
         }
       }
+
       .address {
         font-size: 24rpx;
         color: #666;
@@ -219,19 +227,21 @@ onMounted(() => {
         }
       }
     }
+
     .weather {
       // background-color: red;
       display: flex;
       align-items: center;
       justify-content: center;
-      justify-content: center;
       flex: 1;
       height: 130rpx;
+
       .tem {
         font-weight: 600;
         font-size: 80rpx;
         color: #da2121;
         position: relative;
+
         &::before {
           content: '℃';
           font-size: 20rpx;
@@ -243,6 +253,7 @@ onMounted(() => {
       }
     }
   }
+
   .notice {
     width: 100%;
     height: 80rpx;
@@ -258,6 +269,7 @@ onMounted(() => {
     box-sizing: border-box;
     padding-left: 60rpx;
     position: relative;
+
     &::before {
       content: '';
       width: 36rpx;
@@ -271,15 +283,18 @@ onMounted(() => {
       background-size: cover;
     }
   }
+
   .fun {
     width: 100%;
     margin-top: 30rpx;
+
     .fun-main {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       grid-template-rows: repeat(2, 200rpx);
       grid-gap: 24rpx;
       width: 100%;
+
       .fun-item {
         display: flex;
         flex-direction: column;
@@ -287,10 +302,12 @@ onMounted(() => {
         justify-content: center;
         background-image: linear-gradient(-20deg, #3c46da 0%, #2e2699 100%);
         border-radius: 10rpx;
+
         image {
           width: 80rpx;
           height: 80rpx;
         }
+
         .title {
           font-size: 28rpx;
           color: #fff;

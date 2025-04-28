@@ -16,8 +16,8 @@ const defaultHeaders = {
 }
 const { VITE_BASE_URL: baseUrl } = import.meta.env
 
-import userStore from '../stores/user'
-const user = userStore()
+import globalStore from '../stores/global'
+const global = globalStore()
 
 export const request = <T = AnyObject>(requestConfig: RequestConfig, customBaseUrl: string = baseUrl) => {
   const { method = 'POST', data = {} } = requestConfig
@@ -39,7 +39,7 @@ export const request = <T = AnyObject>(requestConfig: RequestConfig, customBaseU
         }
         if (statusCode === 401) {
           // 清空登录状态
-          user.$reset()
+          global.$reset()
 
           uni.showToast({
             title: '登录信息已过期，请重新登录',

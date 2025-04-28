@@ -110,6 +110,7 @@
     "userStore": true,
     "stores": true,
     "user": true,
-    "GD_KEY": true
+    "GD_KEY": true,
+    "global": true
   }
 }

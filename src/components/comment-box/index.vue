@@ -1,12 +1,22 @@
-<!-- eslint-disable @typescript-eslint/no-unused-expressions -->
 <script setup lang="ts">
-import CommentItem from '@/components/comment-item/index.vue'
+import CommentBox from '@/components/comment-box/index.vue'
+// import CommentPop from '@/components/comment-pop/index.vue'
 import { ICommentItem } from '@/utils/interface'
-import userStore from '@/stores/user'
-import { replyPost, deletePostByPuid } from '@/utils/api'
+import globalStore from '@/stores/global'
+import { deletePostByPuid } from '@/utils/api'
+import { formatTime } from '@/utils/tool'
 
-const user = userStore()
+const global = globalStore()
+
+const handleChildDelete = () => {
+  emit('delete', { status: true })
+}
+
 defineProps({
+  replyUserName: {
+    type: String,
+    default: ''
+  },
   isTab: {
     type: Boolean,
     default: false
@@ -25,37 +35,16 @@ defineProps({
   }
 })
 
-// 回复的id
-const puid = ref<string>('')
-const text = ref<string>('')
-// 回复谁
-const replyName = ref<string>('')
-const popRef = ref()
-
 const openBox = (id: string, username: string) => {
-  puid.value = id
-  replyName.value = username
-  console.log('sssss', puid.value, replyName.value)
-  popRef.value && popRef.value.open('center')
-}
-
-const emit = defineEmits(['reply', 'delete'])
-
-// 用户在弹窗里点“确定”时提交
-const submitReply = async () => {
-  const auth = user.userInfo.id
-  const res = await replyPost(text.value, puid.value, auth)
-  if (res.code === 0) {
-    handleChildReply()
+  const param = {
+    puid: id,
+    commentReplyName: username
   }
-}
-const handleChildReply = () => {
-  emit('reply', { status: true })
+  global.setCommentInfo(param)
+  global.openCommentDialog(username)
 }
 
-const handleChildDelete = () => {
-  emit('delete', { status: true })
-}
+const emit = defineEmits(['delete'])
 
 const deletePost = async (puid: string) => {
   uni.showModal({
@@ -74,63 +63,67 @@ const deletePost = async (puid: string) => {
 <template>
   <view class="comment-area">
     <template v-if="Array.isArray(childList) && childList.length > 0">
-      <view v-for="item in childList" :key="item.documentId" class="comment-item">
+      <view v-for="item in childList" :key="item.documentId" class="comment-item" :class="{ deep: isTab }">
         <view class="line" :class="{ tab: isTab }">
           <view class="avatar" v-show="showAvatar">
             <image :src="item.users_permissions_user.avatar" mode="scaleToFill" />
           </view>
 
-          <view class="info-detail" @click="openBox(item.puid, item.users_permissions_user.username)">
-            <view class="name">{{ item.users_permissions_user.username }}</view>
-            <view class="content"> {{ item.content }}</view>
-            <view class="time" v-show="showTime">2025-04-27</view>
+          <view class="info-detail">
+            <view class="name" @click="openBox(item.puid, item.users_permissions_user.username)">{{
+              item.users_permissions_user.username
+            }}</view>
+            <view class="content" @click="openBox(item.puid, item.users_permissions_user.username)"
+              >回复@{{ replyUserName }}： {{ item.content }}</view
+            >
+            <view class="time" v-show="showTime">
+              <text>{{ formatTime(item.createdAt) }}</text>
+              <image
+                class="delete"
+                @click="deletePost(item.puid)"
+                v-if="item.users_permissions_user.username === global.userInfo.username"
+                src="https://iili.io/3WJstv1.png"
+                mode="scaleToFill"
+              />
+            </view>
           </view>
-
-          <image
-            class="delete"
-            @click="deletePost(item.puid)"
-            v-if="item.users_permissions_user.username === user.userInfo.username"
-            src="https://iili.io/3WJstv1.png"
-            mode="scaleToFill"
-          />
         </view>
 
         <!-- 二级回复 缩进-->
-        <CommentItem :child-list="item.child" :isTab="true" @reply="handleChildReply" @delete="handleChildDelete" />
+        <CommentBox
+          :child-list="item.child"
+          :reply-user-name="item.users_permissions_user.username"
+          :isTab="true"
+          @delete="handleChildDelete"
+        />
       </view>
     </template>
-
-    <!-- 评论框 -->
-    <uni-popup ref="popRef" type="dialog">
-      <uni-popup-dialog value="" ref="inputClose" :title="`回复${replyName}`" @confirm="submitReply">
-        <uni-easyinput type="textarea" v-model="text" placeholder="请输入内容"></uni-easyinput>
-      </uni-popup-dialog>
-    </uni-popup>
   </view>
+
+  <!-- 评论框 -->
+  <!-- <CommentPop v-show="global.showCommentDialog" @comfirm="submitReply" /> -->
 </template>
 <style lang="scss" scoped>
 .comment-area {
   width: 100%;
   box-sizing: border-box;
+
   .comment-item {
     width: 100%;
     box-sizing: border-box;
     padding: 20rpx;
   }
+
+  .comment-item.deep {
+    padding: 20rpx 0;
+  }
+
   .line {
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
     box-sizing: border-box;
-    position: relative;
-    .delete {
-      width: 30rpx;
-      height: 30rpx;
-      position: absolute;
-      right: 0;
-      top: 50%;
-      transform: translateY(-50%);
-    }
+
     .avatar {
       width: 60rpx;
       height: 60rpx;
@@ -138,38 +131,58 @@ const deletePost = async (puid: string) => {
       background-color: red;
       overflow: hidden;
       margin-right: 20rpx;
+
       image {
         width: 100%;
         height: 100%;
       }
     }
+
     .info-detail {
       width: 100%;
       display: flex;
       flex-direction: column;
       justify-content: center;
       font-size: 30px;
+
       .name {
-        font-size: 24rpx;
-        color: #000000;
+        color: #000;
         font-size: 500;
         margin-bottom: 8rpx;
       }
+
       .content {
         font-size: 18rpx;
         color: #333;
-
         margin-bottom: 8rpx;
       }
+
       .time {
+        width: 100%;
+        padding: 6rpx 0;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
         font-size: 18rpx;
         color: #333;
+        position: relative;
+
+        .delete {
+          width: 20rpx;
+          height: 20rpx;
+          position: absolute;
+          left: 200rpx;
+          top: 50%;
+          transform: translateY(-50%);
+        }
       }
     }
   }
+
   .line.tab {
     padding-left: 40rpx;
   }
+
   .pop-main {
     width: 600rpx;
     height: 500rpx;

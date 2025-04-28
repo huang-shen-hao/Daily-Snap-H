@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
 import { GD_KEY } from '@/constant/index' //这个就是你在第一步申请的key值
 import AMapWX from '@/static/amap-wx.130.js'
 
@@ -50,3 +49,20 @@ export const removeArea = (address: string) => {
 }
 
 // 时间格式转换 createdAt: "2025-04-25T09:18:17.204Z" 例如2025-04-25 09:18:17
+export const formatTime = (utcStr: string) => {
+  const date = new Date(utcStr)
+
+  // 加 8 小时（转东八区）
+  const chinaTime = new Date(date.getTime() + 8 * 60 * 60 * 1000)
+
+  // 格式化为 YYYY-MM-DD HH:mm:ss
+  const pad = (num: any) => num.toString().padStart(2, '0')
+  const year = chinaTime.getUTCFullYear()
+  const month = pad(chinaTime.getUTCMonth() + 1) // 月份从 0 开始
+  const day = pad(chinaTime.getUTCDate())
+  const hours = pad(chinaTime.getUTCHours())
+  const minutes = pad(chinaTime.getUTCMinutes())
+  const seconds = pad(chinaTime.getUTCSeconds())
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+}
