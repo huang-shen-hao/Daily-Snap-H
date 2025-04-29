@@ -24,7 +24,20 @@
         <view class="title"> {{ item.title }}</view>
         <view class="content"> {{ item.content }}</view>
         <view class="tools">
-          <image calss="like" src="https://iili.io/3VyQCrP.png" mode="scaleToFill" />
+          <image
+            calss="like"
+            v-show="item.isLike"
+            src="https://iili.io/3WDD4se.png"
+            @click="doUnLikePost(item.puid)"
+            mode="scaleToFill"
+          />
+          <image
+            calss="like"
+            v-show="!item.isLike"
+            src="https://iili.io/3VyQCrP.png"
+            @click="doLikePost(item.puid)"
+            mode="scaleToFill"
+          />
           <image
             calss="comment"
             src="https://iili.io/3VyQBEB.png"
@@ -32,6 +45,17 @@
             mode="scaleToFill"
           />
         </view>
+      </view>
+
+      <view class="like-con" v-if="item.likes.length > 0">
+        <view
+          class="like-item"
+          v-for="like in item.likes.length > 3 ? item.likes.slice(0, 3) : item.likes"
+          :key="like.uuid"
+        >
+          <image class="like-avatar" :src="like.avatar" mode="scaleToFill" />
+        </view>
+        <view class="text">等{{ item.likes.length }}人觉得很赞</view>
       </view>
 
       <CommentBox :child-list="item.child" :reply-user-name="item.users_permissions_user.username" @delete="refresh" />
@@ -49,7 +73,7 @@
 import myTabBar from '@/components/my-tab-bar/index.vue'
 import CommentBox from '@/components/comment-box/index.vue'
 import CommentPop from '@/components/comment-pop/index.vue'
-import { getPostList, deletePostByPuid } from '@/utils/api'
+import { getPostList, deletePostByPuid, likePost, unLikePost } from '@/utils/api'
 import { ICommentItem } from '@/utils/interface'
 import globalStore from '@/stores/global'
 import { formatTime } from '@/utils/tool'
@@ -58,10 +82,28 @@ const global = globalStore()
 
 const list = ref<ICommentItem[]>([])
 
+/**
+ * 递归遍历帖子列表，设置 isLike 标志
+ * @param {Array<Object>} posts - 帖子列表，每个对象可能含有 `likes` 数组和 `child` 子评论数组
+ * @param {string} userUuid - 当前登录用户的 uuid
+ */
+const markLikes = (posts: ICommentItem[], uuid: string) => {
+  posts.forEach(post => {
+    // 如果 likes 数组中至少有一个点赞对象的 uuid 与当前用户匹配，则标记 isLike
+    post.isLike = Array.isArray(post.likes) && post.likes.some(like => like.uuid === uuid)
+
+    // 处理多层嵌套的子评论
+    if (Array.isArray(post.child) && post.child.length > 0) {
+      markLikes(post.child, uuid)
+    }
+  })
+}
+
 const getList = async () => {
   const res = await getPostList()
   if (res.code === 0) {
     list.value = res.data
+    markLikes(list.value, global.userInfo.uuid)
     console.log('sss', list.value)
   }
   console.log(res)
@@ -106,6 +148,29 @@ const openBox = (id: string, username: string) => {
   }
   global.setCommentInfo(param)
   global.openCommentDialog(username)
+}
+
+const doLikePost = async (puid: string) => {
+  const userId = global.userInfo.uuid
+  const res = await likePost(puid, userId)
+  if (res.code === 0) {
+    await getList()
+    uni.showToast({
+      title: res.message,
+      icon: 'none'
+    })
+  }
+}
+const doUnLikePost = async (puid: string) => {
+  const userId = global.userInfo.uuid
+  const res = await unLikePost(puid, userId)
+  if (res.code === 0) {
+    await getList()
+    uni.showToast({
+      title: res.message,
+      icon: 'none'
+    })
+  }
 }
 </script>
 
@@ -251,6 +316,31 @@ const openBox = (id: string, username: string) => {
           height: 40rpx;
           margin: 0 20rpx;
         }
+      }
+    }
+
+    .like-con {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 20rpx;
+      box-sizing: border-box;
+      border-bottom: 2rpx solid rgb(206 206 206);
+
+      .like-item {
+        .like-avatar {
+          display: block;
+          width: 60rpx;
+          height: 60rpx;
+          border-radius: 50%;
+        }
+      }
+
+      .text {
+        font-size: 24rpx;
+        color: #666;
+        margin-left: 10rpx;
       }
     }
 

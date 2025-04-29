@@ -52,6 +52,7 @@ export const request = <T = AnyObject>(requestConfig: RequestConfig, customBaseU
         }
         if (statusCode === CODE_200 || statusCode === CODE_0) {
           console.log('封装的', data)
+          if (data.status === '1') return resolve(<T>data)
           if (data.result) return resolve(<T>data.result)
           return resolve(<T>(requestConfig.fullRes ? data : data.data))
         } else {

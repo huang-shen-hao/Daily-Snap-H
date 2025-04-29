@@ -44,8 +44,6 @@ const { username, email, avatar } = toRefs(global.userInfo) // 响应式
 
 const userInfo = uni.getStorageSync('user')
 
-console.log(userInfo)
-
 onShow(() => {
   uni.hideTabBar()
 })
@@ -93,22 +91,17 @@ const realWeather = ref<realWeatherType>({
 
 const getLocation = async () => {
   const res = await getAddress()
-
-  city.value = res.regeocodeData.addressComponent.city
-  district.value = res.regeocodeData.addressComponent.district
-  province.value = res.regeocodeData.addressComponent.province
-  console.log(province.value, city.value, district.value)
-
+  city.value = res.regeocode.addressComponent.city
+  district.value = res.regeocode.addressComponent.district
+  province.value = res.regeocode.addressComponent.province
   const area = removeArea(district.value)
-
   const param = {
     city: area,
     key: '089bd910f53a6b4f1405144db27dfbc2'
   }
   const weather = await getWeather(param)
-  console.log('weather', weather)
+  console.log('sssssssss', weather)
   realWeather.value = weather.realtime
-  console.log(realWeather.value)
 }
 
 onMounted(() => {

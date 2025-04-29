@@ -12,7 +12,8 @@ const globalStore = defineStore('global', {
         username: '',
         email: '',
         avatar: '',
-        id: ''
+        id: '',
+        uuid: ''
       }
     }
   },

@@ -1,26 +1,4 @@
-import { GD_KEY } from '@/constant/index' //这个就是你在第一步申请的key值
-import AMapWX from '@/static/amap-wx.130.js'
-
-// 高德地图逆向经纬度
-export const wxGetAddress = (longitude: number, latitude: number) => {
-  //创建一个实例化对象
-  const myAmapFun = new AMapWX({
-    key: GD_KEY
-  })
-
-  //根据传递进来经纬度进行反解析，调用的是高德给的方法
-  return new Promise(resolve => {
-    myAmapFun.getRegeo({
-      location: `${longitude},${latitude}`,
-      success: (res: unknown[]) => {
-        resolve(res[0])
-      },
-      fail: () => {
-        resolve(null)
-      }
-    })
-  })
-}
+import { wxGetAddress } from '@/utils/api'
 
 export const getAddress = () => {
   return new Promise<AnyObject>((resolve, reject) => {
@@ -29,7 +7,9 @@ export const getAddress = () => {
       geocode: true, //设置该参数为true可直接获取经纬度及城市信息
       success: async res => {
         const { latitude, longitude } = res
+        console.log('latitude', latitude, longitude)
         const address = await wxGetAddress(longitude, latitude)
+
         resolve(address as AnyObject)
       },
       fail: err => {

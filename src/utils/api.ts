@@ -1,4 +1,5 @@
 import { request } from './request'
+import { GD_KEY } from '@/constant/index' //这个就是你在第一步申请的key值
 import { LoginForm, registerForm, weatherForm } from './interface'
 import globalStore from '../stores/global'
 
@@ -73,12 +74,12 @@ export const login = (param: LoginForm) => {
 // 用户登录 -> 首页 -> 存用户信息
 export const loginAndsaveUserInfo = async (param: LoginForm) => {
   const result = await login(param)
-  console.log('登录结果：', result)
   if (result.code === 0) {
     const { data, jwt } = result.data
-    const { documentId, email, username, avatar } = data
+    const { documentId, email, username, avatar, uuid } = data
     global.$patch({
       userInfo: {
+        uuid: uuid,
         id: documentId,
         email,
         username,
@@ -97,7 +98,7 @@ export const loginAndsaveUserInfo = async (param: LoginForm) => {
   } else {
     const { message } = result
     uni.showToast({
-      title: message,
+      title: message || '登录失败',
       icon: 'none',
       duration: 2000
     })
@@ -110,6 +111,7 @@ export const getWeather = (param: weatherForm) => {
     {
       url: 'simpleWeather/query',
       method: 'GET',
+      isNormal: false,
       header: {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
@@ -118,6 +120,24 @@ export const getWeather = (param: weatherForm) => {
       }
     },
     'http://apis.juhe.cn/'
+  )
+}
+
+// 高德地图逆向经纬度
+export const wxGetAddress = (longitude: number, latitude: number) => {
+  //根据传递进来经纬度进行反解析，调用的是高德给的方法
+  return request(
+    {
+      isNormal: false,
+      url: 'v3/geocode/regeo',
+      method: 'GET',
+      data: {
+        key: GD_KEY,
+        location: `${longitude},${latitude}`
+      }
+    },
+
+    'https://restapi.amap.com/'
   )
 }
 
@@ -176,6 +196,35 @@ export const addPost = (title: string, content: string, author: string) => {
       title,
       content,
       author
+    }
+  })
+}
+
+// 点赞
+export const likePost = (postId: string, userId: string) => {
+  return request({
+    url: 'api/ds-post-thumb/add',
+    method: 'POST',
+    fullRes: true,
+    header: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    },
+    data: {
+      postId,
+      userId
+    }
+  })
+}
+
+// 取消赞
+export const unLikePost = (postId: string, userId: string) => {
+  return request({
+    url: `api/ds-post-thumb/delete?postId=${postId}&userId=${userId}`,
+    method: 'DELETE',
+    fullRes: true,
+    header: {
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
     }
   })
 }

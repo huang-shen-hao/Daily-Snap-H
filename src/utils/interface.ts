@@ -50,4 +50,5 @@ export interface ICommentItem {
   type: string
   updatedAt: string // ISO 时间字符串
   users_permissions_user: UsersPermissionsUser
+  isLike?: boolean
 }
