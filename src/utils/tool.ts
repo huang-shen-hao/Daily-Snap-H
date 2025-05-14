@@ -1,5 +1,6 @@
 import { wxGetAddress } from '@/utils/api'
-
+import globalStore from '../stores/global'
+const global = globalStore()
 export const getAddress = () => {
   return new Promise<AnyObject>((resolve, reject) => {
     uni.getLocation({
@@ -45,4 +46,12 @@ export const formatTime = (utcStr: string) => {
   const seconds = pad(chinaTime.getUTCSeconds())
 
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+}
+
+// 清空信息
+export const clearInfo = () => {
+  global.$reset()
+  // 清空本地存储的jwt
+  uni.removeStorageSync('jwt')
+  uni.removeStorageSync('user')
 }

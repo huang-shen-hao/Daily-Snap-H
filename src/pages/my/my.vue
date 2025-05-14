@@ -35,7 +35,7 @@
     </view>
 
     <view class="foot">
-      <view class="foot-item" v-for="item in footList" :key="item.name" @click="goPage(item.path)">
+      <view class="foot-item" v-for="item in footList" :key="item.name" @click="goPage(item.path, item.type)">
         <button v-if="item.type === 'service'" class="name" open-type="contact">{{ item.name }}</button>
         <view v-else class="name">{{ item.name }}</view>
       </view>
@@ -117,23 +117,8 @@ const footList = [
   },
   {
     type: 'page',
-    name: '主题切换',
-    path: '/pages/theme/theme'
-  },
-  {
-    type: 'page',
     name: '设置',
     path: '/pages/setting/setting'
-  },
-  {
-    type: 'page',
-    name: '隐私政策',
-    path: '/pages/private/private'
-  },
-  {
-    type: 'page',
-    name: '关于我们',
-    path: '/pages/contract/contract'
   }
 ]
 
@@ -141,7 +126,8 @@ onMounted(() => {
   getLocation()
 })
 
-const goPage = (path: string) => {
+const goPage = (path: string, type?: string) => {
+  if (type === 'service') return
   const bar = ['home', 'square', 'my']
   const isBar = bar.some(item => path.includes(item))
   if (isBar) {
@@ -159,7 +145,7 @@ const goPage = (path: string) => {
 <style lang="scss" scoped>
 .my-con {
   width: 100%;
-  padding-bottom: 80rpx;
+  min-height: 100vh;
   background: linear-gradient(180deg, #fffbeb 0%, #f6f6f6 37%);
 
   .header {
@@ -402,6 +388,8 @@ const goPage = (path: string) => {
         height: 88rpx;
       }
       .name {
+        width: 100%;
+        height: 100%;
         margin-top: 8rpx;
         height: 40rpx;
         font-family:
@@ -445,7 +433,16 @@ const goPage = (path: string) => {
         background: url('https://iili.io/3SFqxCF.png') no-repeat center;
         background-size: cover;
       }
+      button {
+        padding: 0;
+        background: transparent;
+        &::after {
+          border: none;
+        }
+      }
       .name {
+        width: 100%;
+        height: 100%;
         font-family:
           Alibaba PuHuiTi,
           Alibaba PuHuiTi;
@@ -453,7 +450,7 @@ const goPage = (path: string) => {
         font-size: 28rpx;
         color: #000000;
         line-height: 40rpx;
-        text-align: center;
+        text-align: left;
         font-style: normal;
         text-transform: none;
       }

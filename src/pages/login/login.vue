@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { type LoginForm } from '../../utils/interface'
 import { loginAndsaveUserInfo } from '../../utils/api'
+import { clearInfo } from '../../utils/tool'
+
 const form = reactive<LoginForm>({
   email: '1467788588@qq.com',
   password: '123456789'
