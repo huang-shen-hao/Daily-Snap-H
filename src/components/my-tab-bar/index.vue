@@ -25,7 +25,7 @@ const tabbarList = [
   {
     id: 2,
     pagePath: '/pages/square/square',
-    text: '广场',
+    text: '留言板',
     iconPath: '../../static/image/center_before.svg',
     selectedIconPath: '../../static/image/center_after.svg'
   },

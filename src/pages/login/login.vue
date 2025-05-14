@@ -47,6 +47,24 @@ const goRegister = () => {
     url: '/pages/register/register'
   })
 }
+
+onShareAppMessage(() => {
+  return {
+    title: '登录',
+    path: 'pages/login/login'
+    // imageUrl: '/static/logo.png'
+  }
+})
+
+// 判断如果本地有token，则跳转到首页，否则跳转到登录页
+onLoad(() => {
+  const token = uni.getStorageSync('jwt')
+  if (token) {
+    uni.switchTab({
+      url: '/pages/my/my'
+    })
+  }
+})
 </script>
 <template>
   <view class="login-con" @touchmove.stop.prevent="() => {}">
@@ -59,7 +77,9 @@ const goRegister = () => {
     </view>
     <view class="login-form">
       <view class="main">
-        <view class="welcome">欢迎来到</view>
+        <view class="welcome">
+          <image src="https://iili.io/3S9B0FV.png" mode="scaleToFill" />
+        </view>
 
         <uni-forms ref="formRef" :modelValue="form" :rules="rules">
           <view class="form-item">
@@ -98,7 +118,7 @@ const goRegister = () => {
   justify-content: flex-start;
   box-sizing: border-box;
   padding-top: 114rpx;
-  padding-left: 24rpx;
+  padding-left: 40rpx;
   position: relative;
   &::after {
     content: '';
@@ -150,6 +170,7 @@ const goRegister = () => {
       box-sizing: border-box;
       padding-top: 63rpx;
       padding-left: 48rpx;
+      padding-right: 48rpx;
       z-index: 9;
       &::after {
         content: '';
@@ -166,26 +187,9 @@ const goRegister = () => {
     }
 
     .welcome {
-      position: relative;
-      font-family:
-        Alibaba PuHuiTi,
-        Alibaba PuHuiTi;
-      font-weight: 800;
-      font-size: 64rpx;
-      color: #333333;
-      text-align: left;
-      font-style: normal;
-      text-transform: none;
-      &::after {
-        content: '';
-        width: 318rpx;
+      width: 609rpx;
+      image {
         height: 65rpx;
-        background-image: url('https://iili.io/3McNYIR.png');
-        background-size: cover;
-        position: absolute;
-        left: 270rpx;
-        top: 50%;
-        transform: translateY(-50%);
       }
     }
     .form-item {
@@ -193,7 +197,6 @@ const goRegister = () => {
       align-items: center;
       justify-content: space-between;
       margin-top: 40rpx;
-      padding-right: 48rpx;
       .label {
         width: 135rpx;
         height: 96rpx;
@@ -219,12 +222,27 @@ const goRegister = () => {
       :deep(.uni-forms-item) {
         margin-bottom: 0;
       }
+      :deep(.is-input-border) {
+        border: none;
+      }
       :deep(.uni-easyinput),
       :deep(.uni-easyinput__content) {
         width: 455rpx;
         height: 96rpx;
         padding: 0 !important;
         border-radius: 20rpx 60rpx 60rpx 20rpx;
+        .uni-easyinput__placeholder-class {
+          font-family:
+            PingFang SC,
+            PingFang SC;
+          font-weight: 400;
+          font-size: 28rpx;
+          color: #999999;
+          line-height: 56rpx;
+          text-align: left;
+          font-style: normal;
+          text-transform: none;
+        }
         input {
           width: 455rpx;
           height: 92rpx;
@@ -266,9 +284,12 @@ const goRegister = () => {
         align-items: center;
         justify-content: center;
       }
+      button::after {
+        border: none;
+      }
       .register {
         background: transparent;
-        border: 1rpx solid #d3ca12;
+        border: 2rpx solid #d3ca12;
         margin-top: 40rpx;
       }
     }

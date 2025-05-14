@@ -111,6 +111,14 @@ const register = () => {
   }
   registerAndsaveUserInfo(registerForm)
 }
+
+onShareAppMessage(() => {
+  return {
+    title: '注册',
+    path: 'pages/register/register'
+    // imageUrl: '/static/logo.png'
+  }
+})
 </script>
 <template>
   <view class="login-con" @touchmove.stop.prevent="() => {}">
@@ -123,7 +131,9 @@ const register = () => {
     </view>
     <view class="login-form">
       <view class="main">
-        <view class="welcome">欢迎来到</view>
+        <view class="welcome">
+          <image src="https://iili.io/3S9B0FV.png" mode="scaleToFill" />
+        </view>
 
         <uni-forms ref="formRef" :modelValue="registerForm" :rules="rules">
           <view class="form-item">
@@ -159,7 +169,7 @@ const register = () => {
           </view>
 
           <view class="opt">
-            <button @click="register">注册</button>
+            <button register @click="register">注册</button>
           </view>
         </uni-forms>
       </view>
@@ -178,7 +188,7 @@ const register = () => {
   justify-content: flex-start;
   box-sizing: border-box;
   padding-top: 114rpx;
-  padding-left: 24rpx;
+  padding-left: 40rpx;
   position: relative;
 
   .header-img {
@@ -221,30 +231,13 @@ const register = () => {
       box-sizing: border-box;
       padding-top: 63rpx;
       padding-left: 48rpx;
+      padding-right: 48rpx;
       z-index: 9;
     }
-
     .welcome {
-      position: relative;
-      font-family:
-        Alibaba PuHuiTi,
-        Alibaba PuHuiTi;
-      font-weight: 800;
-      font-size: 64rpx;
-      color: #333333;
-      text-align: left;
-      font-style: normal;
-      text-transform: none;
-      &::after {
-        content: '';
-        width: 318rpx;
+      width: 609rpx;
+      image {
         height: 65rpx;
-        background-image: url('https://iili.io/3McNYIR.png');
-        background-size: cover;
-        position: absolute;
-        left: 270rpx;
-        top: 50%;
-        transform: translateY(-50%);
       }
     }
     .form-item {
@@ -252,7 +245,6 @@ const register = () => {
       align-items: center;
       justify-content: space-between;
       margin-top: 40rpx;
-      padding-right: 48rpx;
       .label {
         width: 135rpx;
         height: 96rpx;
@@ -284,6 +276,18 @@ const register = () => {
         height: 96rpx;
         padding: 0 !important;
         border-radius: 20rpx 60rpx 60rpx 20rpx;
+        .uni-easyinput__placeholder-class {
+          font-family:
+            PingFang SC,
+            PingFang SC;
+          font-weight: 400;
+          font-size: 28rpx;
+          color: #999999;
+          line-height: 56rpx;
+          text-align: left;
+          font-style: normal;
+          text-transform: none;
+        }
         input {
           width: 455rpx;
           height: 92rpx;
@@ -302,9 +306,13 @@ const register = () => {
             text-align: left;
             font-style: normal;
             text-transform: none;
+            padding-left: 32rpx;
           }
         }
       }
+    }
+    :deep(.is-input-border) {
+      border: none;
     }
     .form-item.code {
       :deep(.uni-easyinput),
@@ -352,9 +360,13 @@ const register = () => {
       }
     }
     .opt {
+      width: 100%;
       margin-top: 40rpx;
+      button::after {
+        border: none;
+      }
       button {
-        width: 615rpx;
+        width: 100%;
         height: 120rpx;
         background: #f9f26d;
         border-radius: 60rpx 60rpx 60rpx 60rpx;

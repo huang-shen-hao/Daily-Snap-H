@@ -40,15 +40,19 @@ export const request = <T = AnyObject>(requestConfig: RequestConfig, customBaseU
         if (statusCode === 401) {
           // 清空登录状态
           global.$reset()
-
+          // 清空本地存储的jwt
+          uni.removeStorageSync('jwt')
+          uni.removeStorageSync('user')
           uni.showToast({
             title: '登录信息已过期，请重新登录',
             icon: 'none',
-            duration: 2000
+            duration: 1500
           })
+
           setTimeout(() => {
             uni.redirectTo({ url: '/pages/login/login' })
           }, 2000)
+          return
         }
         if (statusCode === CODE_200 || statusCode === CODE_0) {
           console.log('封装的', data)
