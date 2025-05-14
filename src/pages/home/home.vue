@@ -1,10 +1,25 @@
 <template>
-  <view class="container"> </view>
+  <view class="container">
+    <view v-for="item in funList" :key="item.name" class="fun-item" @click="goFunPage(item.path)">{{ item.name }}</view>
+  </view>
   <my-tab-bar :selected="0" />
 </template>
 
 <script setup lang="ts">
 import myTabBar from '@/components/my-tab-bar/index.vue'
+
+const funList = [
+  {
+    name: '记事本',
+    path: '/pages/note/list'
+  }
+]
+
+const goFunPage = (path: string) => {
+  uni.navigateTo({
+    url: path
+  })
+}
 
 onLoad(() => {
   // 页面加载时的逻辑
