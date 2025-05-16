@@ -1,0 +1,14 @@
+<svg width="61" height="60" viewBox="0 0 61 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="&#230;&#136;&#145;&#231;&#154;&#132;" clip-path="url(#clip0_115_633)">
+<path id="Vector" d="M0.964391 16.8332L5.16788 49.0355C5.68795 53.0197 9.08259 56 13.1006 56H47.9183C51.9649 56 55.3742 52.9784 55.8604 48.9612L59.7538 16.7897C59.9907 14.8329 57.8731 13.4588 56.1775 14.4641C40.2659 23.8982 20.4378 23.92 4.52614 14.4859C2.82457 13.477 0.708343 14.8716 0.964391 16.8332Z" fill="#EAEAEA" style="fill:#EAEAEA;fill:color(display-p3 0.9188 0.9188 0.9188);fill-opacity:1;"/>
+<path id="Vector_2" d="M28.8946 6.05039L21.6369 17.8474C20.7749 19.248 21.8523 21 23.5757 21H38.0915C39.8149 21 40.8918 19.2492 40.0303 17.8474L32.7722 6.05039C31.9107 4.64987 29.7561 4.64987 28.8946 6.05039Z" stroke="#D1D1D1" style="stroke:#D1D1D1;stroke:color(display-p3 0.8180 0.8180 0.8180);stroke-opacity:1;" stroke-width="5"/>
+<rect id="Rectangle 42451" x="22.0478" y="38.7143" width="16.5714" height="10.5714" rx="5.28571" stroke="#D1D1D1" style="stroke:#D1D1D1;stroke:color(display-p3 0.8180 0.8180 0.8180);stroke-opacity:1;" stroke-width="7.42857"/>
+<ellipse id="Ellipse 7391" cx="18.3335" cy="29" rx="4" ry="5" fill="#333333" style="fill:#333333;fill:color(display-p3 0.2000 0.2000 0.2000);fill-opacity:1;"/>
+<ellipse id="Ellipse 7392" cx="42.3335" cy="29" rx="4" ry="5" fill="#333333" style="fill:#333333;fill:color(display-p3 0.2000 0.2000 0.2000);fill-opacity:1;"/>
+</g>
+<defs>
+<clipPath id="clip0_115_633">
+<rect width="60" height="60" fill="white" style="fill:white;fill-opacity:1;" transform="translate(0.333496)"/>
+</clipPath>
+</defs>
+</svg>

@@ -17,23 +17,16 @@ const tabbarList = [
   },
   {
     id: 1,
-    pagePath: '/pages/center/center',
-    text: '中心',
-    iconPath: '../../static/image/center_before.svg',
-    selectedIconPath: '../../static/image/center_after.svg'
+    pagePath: '/pages/square/square',
+    text: '留言板',
+    iconPath: '../../static/image/message_board_before.svg',
+    selectedIconPath: '../../static/image/message_board_after.svg'
   },
   {
     id: 2,
-    pagePath: '/pages/square/square',
-    text: '留言板',
-    iconPath: '../../static/image/center_before.svg',
-    selectedIconPath: '../../static/image/center_after.svg'
-  },
-  {
-    id: 3,
     pagePath: '/pages/my/my',
-    iconPath: '../../static/image/my_before.svg',
-    selectedIconPath: '../../static/image/my_after.svg',
+    iconPath: '../../static/image/me_before.svg',
+    selectedIconPath: '../../static/image/me_after.svg',
     text: '我的'
   }
 ]
@@ -45,7 +38,13 @@ const changeTabbar = (path: string) => {
 <template>
   <view class="custom-tab-bar">
     <view class="main">
-      <view v-for="(item, index) in tabbarList" :key="index" class="tab-bar-item" @click="changeTabbar(item.pagePath)">
+      <view
+        v-for="(item, index) in tabbarList"
+        :key="index"
+        class="tab-bar-item"
+        :class="{ active: selected === index }"
+        @click="changeTabbar(item.pagePath)"
+      >
         <image class="icon" :src="selected === item.id ? item.selectedIconPath : item.iconPath" />
         <view class="text">{{ item.text }}</view>
       </view>
@@ -54,50 +53,78 @@ const changeTabbar = (path: string) => {
 </template>
 <style lang="scss" scoped>
 .custom-tab-bar {
+  width: calc(100% - 80rpx);
+  height: 118rpx;
+  border-radius: 40rpx;
   position: fixed;
-  bottom: 0;
-
-  // bottom: calc(30rpx + constant(safe-area-inset-bottom));
-  // bottom: calc(30rpx + env(safe-area-inset-bottom));
-  left: 0;
-  right: 0;
-
+  bottom: 68rpx;
+  // bottom: calc(68rpx + constant(safe-area-inset-bottom));
+  // bottom: calc(68rpx + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
   .main {
-    // width: calc(100% - 48rpx);
     width: 100%;
-    height: 120rpx;
-    background-color: #fff;
-
-    // background: rgba(255, 255, 255, 0.65);
-    // box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    // backdrop-filter: blur(5px);
-    // -webkit-backdrop-filter: blur(5px);
-    // border-radius: 10px;
-    border-top: 1px solid rgb(202 202 202);
+    height: 100%;
     display: flex;
     align-items: center;
-    justify-content: space-around;
-    margin: 0 auto;
-
-    // border-radius: 60rpx;
-    padding-bottom: calc(10rpx + constant(safe-area-inset-bottom));
-    padding-bottom: calc(10rpx + env(safe-area-inset-bottom));
+    justify-content: space-between;
 
     .tab-bar-item {
+      width: 100%;
+      height: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      width: calc(100% / 3);
+      height: 100%;
+      &.active {
+        background: #333333;
+        border-radius: 45rpx;
+        .text {
+          color: #fff;
+        }
+      }
 
       .icon {
-        width: 40rpx;
-        height: 40rpx;
+        width: 67rpx;
+        height: 67rpx;
         margin-bottom: 6rpx;
       }
 
       .text {
-        font-size: 24rpx;
-        color: #333;
+        font-family:
+          Alibaba PuHuiTi,
+          Alibaba PuHuiTi;
+        font-weight: bold;
+        font-size: 20rpx;
+        color: #999999;
+        line-height: 24rpx;
+        text-align: center;
+        font-style: normal;
+        text-transform: none;
+      }
+    }
+    .tab-bar-item.active {
+      .icon {
+        width: 90rpx;
+        height: 67rpx;
+      }
+    }
+    .tab-bar-item:first-child.active {
+      .icon {
+        transform: translateX(6rpx);
+      }
+    }
+    .tab-bar-item:nth-child(2).active {
+      .icon {
+        transform: translateX(8rpx);
+      }
+    }
+    .tab-bar-item:nth-child(3).active {
+      .icon {
+        transform: translateX(4rpx);
       }
     }
   }

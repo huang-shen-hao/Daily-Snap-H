@@ -1,10 +1,10 @@
 <template>
   <view class="my-con">
-    <div class="header">
+    <view class="header" @click="changeInfo">
       <image class="avatar" mode="aspectFit" :src="avatar || userInfo.avatar"></image>
       <view class="username">{{ username || userInfo.username }}</view>
       <view class="email">{{ email || userInfo.email }}</view>
-    </div>
+    </view>
 
     <view class="center">
       <view class="center-main">
@@ -42,7 +42,7 @@
     </view>
   </view>
 
-  <my-tab-bar :selected="3" />
+  <my-tab-bar :selected="2" />
 </template>
 
 <script setup lang="ts">
@@ -139,6 +139,12 @@ const goPage = (path: string, type?: string) => {
       url: path
     })
   }
+}
+
+const changeInfo = () => {
+  uni.navigateTo({
+    url: '/pages/my/change-info'
+  })
 }
 </script>
 

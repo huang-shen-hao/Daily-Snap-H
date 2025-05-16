@@ -1,1 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" fill="rgba(17,16,16,1)"><path d="M20 20C20 20.5523 19.5523 21 19 21H5C4.44772 21 4 20.5523 4 20V11L1 11L11.3273 1.6115C11.7087 1.26475 12.2913 1.26475 12.6727 1.6115L23 11L20 11V20ZM8 15V17H16V15H8Z"></path></svg>
+<svg width="80" height="60" viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="&#228;&#184;&#187;&#233;&#161;&#181;" clip-path="url(#clip0_113_458)">
+<g id="Group 1627">
+<path id="Vector 401" d="M5.11991 19.6514L19.8385 3.87885C23.8074 -0.374197 30.5607 -0.344563 34.9858 3.4315C38.1466 6.12869 41.8301 8.87038 45.1591 10.3318C48.5866 11.8364 53.2916 12.7096 57.5408 13.2161C62.0229 13.7504 64.8133 18.9735 62.7262 22.9759C60.9308 26.4189 59.124 30.3669 58.1151 33.923C56.9061 38.1847 56.1866 44.1971 55.766 49.2663C55.3174 54.6737 50.8814 59 45.4554 59H20.2864C16.032 59 12.2433 56.3087 10.8425 52.2916L2.98833 29.7682C1.76557 26.2617 2.5863 22.3664 5.11991 19.6514Z" fill="#F9F26D" style="fill:#F9F26D;fill:color(display-p3 0.9753 0.9479 0.4273);fill-opacity:1;"/>
+<path id="Vector 412" d="M6.17357 34.4515C3.36029 35.6719 -0.245359 39.4783 7.83828 44.9401C12.2778 47.9397 9.76462 52.7608 5.67552 53.2575" stroke="#D294FF" style="stroke:#D294FF;stroke:color(display-p3 0.8250 0.5799 1.0000);stroke-opacity:1;" stroke-width="4.73871" stroke-linecap="round"/>
+<g id="Group 1629">
+<ellipse id="Ellipse 7387" cx="8.04208" cy="9.38243" rx="8.04208" ry="9.38243" transform="matrix(-0.88994 0.456078 0.456078 0.88994 22.3955 17.3079)" fill="white" style="fill:white;fill-opacity:1;"/>
+<path id="Vector 405" d="M16.0883 27.5727C18.4028 27.6071 21.4355 27.9884 22.779 28.4367C24.3616 28.9649 19.6913 30.9914 17.1564 32.6561" stroke="#333333" style="stroke:#333333;stroke:color(display-p3 0.2000 0.2000 0.2000);stroke-opacity:1;" stroke-width="4.73871" stroke-linecap="round"/>
+</g>
+<g id="Group 1633">
+<path id="Ellipse 7386" d="M34.575 24.9287C34.7644 29.876 38.3555 33.7551 42.5961 33.5928C46.8367 33.4305 50.1208 29.2883 49.9315 24.341C49.7421 19.3936 46.151 15.5146 41.9104 15.6769C37.6698 15.8392 34.3857 19.9814 34.575 24.9287Z" fill="white" style="fill:white;fill-opacity:1;"/>
+<path id="Ellipse 7384" d="M45.9068 23.2654C45.4248 21.9384 44.5695 20.853 43.4865 20.1943C42.4035 19.5356 41.1599 19.3442 39.9675 19.6528C38.7752 19.9614 37.7079 20.7508 36.9475 21.8866C36.1871 23.0225 35.7806 24.4344 35.7974 25.8818C35.8141 27.3292 36.2531 28.7225 37.0394 29.8244C37.8257 30.9264 38.9107 31.6686 40.1096 31.9248C41.3085 32.181 42.5471 31.9352 43.6143 31.2293C44.6815 30.5234 45.5113 29.4011 45.9623 28.0537L41.0665 25.7662L45.9068 23.2654Z" fill="#333333" style="fill:#333333;fill:color(display-p3 0.2000 0.2000 0.2000);fill-opacity:1;"/>
+</g>
+<rect id="Rectangle 42444" x="30.8628" y="40.4414" width="9.41323" height="9.41323" rx="4.70661" stroke="#D294FF" style="stroke:#D294FF;stroke:color(display-p3 0.8250 0.5799 1.0000);stroke-opacity:1;" stroke-width="6.4716"/>
+<path id="Vector 409" d="M60.449 8.61627V3.25488" stroke="#D294FF" style="stroke:#D294FF;stroke:color(display-p3 0.8250 0.5799 1.0000);stroke-opacity:1;" stroke-width="4.73871" stroke-linecap="round"/>
+<path id="Vector 411" d="M71.1716 17.552H76.533" stroke="#D294FF" style="stroke:#D294FF;stroke:color(display-p3 0.8250 0.5799 1.0000);stroke-opacity:1;" stroke-width="4.73871" stroke-linecap="round"/>
+<path id="Vector 410" d="M66.7029 11.2972L72.9578 4.14868" stroke="#D294FF" style="stroke:#D294FF;stroke:color(display-p3 0.8250 0.5799 1.0000);stroke-opacity:1;" stroke-width="4.73871" stroke-linecap="round"/>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_113_458">
+<rect width="80" height="60" fill="white" style="fill:white;fill-opacity:1;"/>
+</clipPath>
+</defs>
+</svg>

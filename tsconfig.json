@@ -30,7 +30,8 @@
     "src/**/*.vue",
     "types/**/*.d.ts",
     "src/utils/w_md5.js",
-    "./types/auto-imports.d.ts"
+    "./types/auto-imports.d.ts",
+    "src/static/lottie/data.js"
   ],
   "exclude": ["dist", "node_modules", "*.js", "*.cjs", "src/**/uni-data*/**", "src/router/*.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]

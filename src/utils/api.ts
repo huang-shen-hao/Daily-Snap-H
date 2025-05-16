@@ -105,6 +105,48 @@ export const loginAndsaveUserInfo = async (param: LoginForm) => {
   }
 }
 
+// 获取用户信息
+export const getUserInfo = () => {
+  return request({
+    url: `api/ds-user/getUserInfo`,
+    method: 'GET',
+    header: {
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    }
+  })
+}
+
+// 修改用户信息
+export const updateUserInfo = (id: string, username: string, avatar: string) => {
+  return request({
+    url: `api/ds-user/updateUserInfo`,
+    method: 'POST',
+    header: {
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    },
+    data: {
+      id,
+      username,
+      avatar
+    }
+  })
+}
+
+// 上传OSS图片
+export const uploadOss = (files: File) => {
+  return request({
+    url: 'api/upload/',
+    method: 'POST',
+    header: {
+      'Content-Type': 'multipart/form-data',
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    },
+    data: {
+      files
+    }
+  })
+}
+
 // 获取天气
 export const getWeather = (param: weatherForm) => {
   return request(

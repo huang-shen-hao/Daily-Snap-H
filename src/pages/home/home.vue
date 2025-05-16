@@ -7,7 +7,6 @@
 
 <script setup lang="ts">
 import myTabBar from '@/components/my-tab-bar/index.vue'
-
 const funList = [
   {
     name: '记事本',
@@ -32,6 +31,7 @@ onShow(() => {
 
 <style lang="scss" scoped>
 .container {
+  background: linear-gradient(180deg, #fffbeb 0%, #f6f6f6 37%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -40,5 +40,9 @@ onShow(() => {
   /* 背景铺满屏幕 */
   padding: 20px;
   // background-color: rgb(102, 161, 230);
+}
+.lottie-canvas {
+  width: 600rpx;
+  height: 600rpx;
 }
 </style>

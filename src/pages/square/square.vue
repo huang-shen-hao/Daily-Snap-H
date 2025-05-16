@@ -66,7 +66,7 @@
 
     <view class="add" @click="toAddPage"> 发帖 </view>
   </view>
-  <my-tab-bar :selected="2" />
+  <my-tab-bar :selected="1" />
 </template>
 
 <script setup lang="ts">
