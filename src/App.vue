@@ -17,12 +17,10 @@ export default {
 @import './static/icon/remixicon.css';
 
 @font-face {
-  font-family: 'Alibaba PuHuiT';
+  font-family: 'Alibaba PuHuiTi';
   src:
-    url('~@/static/fonts/AlibabaPuHuiTi-3-55-Regular.woff') format('woff'),
-    url('~@/static/fonts/AlibabaPuHuiTi-3-55-Regular.woff2') format('woff2'),
-    url('~@/static/fonts/AlibabaPuHuiTi-3-55-Regular.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+    url('https://daily-snap.oss-cn-hangzhou.aliyuncs.com/AlibabaPuHuiTi-3-55-Regular.woff'),
+    url('https://daily-snap.oss-cn-hangzhou.aliyuncs.com/AlibabaPuHuiTi-3-55-Regular.ttf'),
+    url('https://daily-snap.oss-cn-hangzhou.aliyuncs.com/AlibabaPuHuiTi-3-55-Regular.woff2');
 }
 </style>
