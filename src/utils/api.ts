@@ -35,7 +35,7 @@ export const register = (param: registerForm) => {
 // 注册 -> 首页 -> 存用户信息
 export const registerAndsaveUserInfo = async (param: registerForm) => {
   const res = await register(param)
-  const { code, message } = res.data
+  const { code, message } = res
   if (code === 0) {
     uni.showToast({
       title: message,
@@ -267,6 +267,114 @@ export const unLikePost = (postId: string, userId: string) => {
     fullRes: true,
     header: {
       Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    }
+  })
+}
+
+// 获取用户所有任务
+export const getUserAllTask = () => {
+  return request({
+    url: 'api/ds-task/all',
+    method: 'GET',
+    header: {
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    }
+  })
+}
+
+// 添加子任务
+export const AddSubTask = (taskId: string, title: string) => {
+  return request({
+    url: 'api/ds-sub-task/add',
+    method: 'POST',
+    header: {
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    },
+    data: {
+      taskId,
+      title
+    }
+  })
+}
+
+// 删除子任务
+export const RemoveSubTask = (id: string) => {
+  return request({
+    url: `api/ds-sub-task/removeById?subTid=${id}`,
+    method: 'DELETE',
+    header: {
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    }
+  })
+}
+
+// 删除子任务
+export const UpdateSubTask = (id: string, title: string) => {
+  return request({
+    url: `api/ds-sub-task/changeTitle`,
+    method: 'POST',
+    header: {
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    },
+    data: {
+      id,
+      title
+    }
+  })
+}
+
+// 子任务完成状态
+export const changeSubTaskStatus = (subTid: string, status: boolean) => {
+  return request({
+    url: 'api/ds-sub-task/change',
+    method: 'POST',
+    header: {
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    },
+    data: {
+      subTid,
+      status
+    }
+  })
+}
+
+// 创建任务
+export const AddTask = (title: string, type: string) => {
+  return request({
+    url: 'api/ds-task/add',
+    method: 'POST',
+    header: {
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    },
+    data: {
+      title,
+      type
+    }
+  })
+}
+
+// 删除任务
+export const RemoveTaskById = (id: string) => {
+  return request({
+    url: `api/ds-task/removeById?id=${id}`,
+    method: 'DELETE',
+    header: {
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    }
+  })
+}
+
+// 批量创建子任务
+export const AddSubTasks = (taskId: number, titles: string[]) => {
+  return request({
+    url: 'api/ds-sub-task/add-batch',
+    method: 'POST',
+    header: {
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    },
+    data: {
+      taskId,
+      titles
     }
   })
 }

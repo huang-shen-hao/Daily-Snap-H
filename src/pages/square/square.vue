@@ -110,7 +110,9 @@ const getList = async () => {
 }
 
 onShow(async () => {
-  console.log('show')
+  global.$patch({
+    previewTabIndex: 1
+  })
   uni.hideTabBar()
   await getList()
 })

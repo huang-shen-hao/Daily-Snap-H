@@ -2,7 +2,7 @@ module.exports = [
   {
     path: 'pages/home/home',
     style: {
-      navigationBarTitleText: '首页'
+      navigationStyle: 'custom' //禁用uni-app默认的头部导
     }
   },
   {

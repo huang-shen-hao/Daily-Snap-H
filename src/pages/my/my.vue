@@ -60,6 +60,10 @@ const userInfo = uni.getStorageSync('user')
 
 onShow(() => {
   uni.hideTabBar()
+  global.$patch({
+    previewTabIndex: 2
+  })
+  // console.log('userInfo', userInfo)
 })
 
 const province = ref<string>('***')

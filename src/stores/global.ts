@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 const globalStore = defineStore('global', {
   state: () => {
     return {
+      previewTabIndex: 0, // 跳转tabbar之前一个的索引
       text: '', //回复的内容
       puid: '', //回复帖子的id
       commentReplyName: '', // 评论回复的用户名
