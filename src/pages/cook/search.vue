@@ -65,8 +65,7 @@ const getMoreFood = async () => {
 
   loading.value = true
   try {
-    getData(key.value, currentPage.value)
-
+    const resC = await getSearchData(key.value, currentPage.value)
     // 兼容后端返回格式
     const list = Array.isArray(resC?.data?.data?.list) ? resC.data.data.list : []
     // 如果本次返回没有数据，说明到底了
@@ -94,6 +93,9 @@ const getMoreFood = async () => {
 .search-con {
   width: 100%;
   height: 100vh;
+  box-sizing: border-box;
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
   .search {
     width: 100%;
     height: 200rpx;

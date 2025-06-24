@@ -144,6 +144,8 @@ onShareAppMessage(share)
   width: 100%;
   height: 100vh;
   box-sizing: border-box;
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
   .head {
     width: 100%;
     height: 310rpx;
