@@ -2,7 +2,7 @@
   <view class="cook-home">
     <view class="head">
       <view class="search">
-        <uni-easyinput v-model="cookName" placeholder="今天想吃啥"></uni-easyinput>
+        <uni-easyinput v-model="cookName" placeholder="今天想吃啥" :clearable="false"></uni-easyinput>
         <button class="btn" @click="search">搜索</button>
       </view>
       <view class="cook-menu">
@@ -208,10 +208,10 @@ onShareAppMessage(share)
           text-transform: none;
         }
         input {
-          width: 455rpx;
+          width: 100% !important;
           height: 92rpx;
           border-radius: 60rpx;
-          background: #f6f6f6;
+        //   background: #dfdfdf !important;
           font-size: 28rpx !important;
           padding-left: 40rpx !important;
           &::placeholder {

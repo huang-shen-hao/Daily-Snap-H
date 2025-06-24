@@ -1,7 +1,7 @@
 <template>
   <view class="search-con">
     <view class="search">
-      <uni-easyinput v-model="cookName" placeholder="今天想吃啥"></uni-easyinput>
+      <uni-easyinput v-model="cookName" placeholder="今天想吃啥" :clearable="false"></uni-easyinput>
       <button class="btn" @click="search">搜索</button>
     </view>
     <scroll-view class="food-main" :scroll-y="true" @scrolltolower="getMoreFood">
@@ -153,7 +153,7 @@ const getMoreFood = async () => {
         width: 455rpx;
         height: 92rpx;
         border-radius: 60rpx;
-        background: #f6f6f6;
+        // background: #f6f6f6;
         font-size: 28rpx !important;
         padding-left: 40rpx !important;
         &::placeholder {

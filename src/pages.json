@@ -23,7 +23,7 @@
       "selectedIconPath": "static/image/home_after.png",
       "text": "首页"
     }, {
-      "pagePath": "pages/center/center",
+      "pagePath": "pages/square/square",
       "iconPath": "static/image/center_before.png",
       "selectedIconPath": "static/image/center_after.png",
       "text": "中心"
