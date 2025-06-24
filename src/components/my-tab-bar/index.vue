@@ -26,6 +26,13 @@ const tabbarList = [
   },
   {
     id: 2,
+    pagePath: '/pages/cook/index',
+    text: '菜谱',
+    iconPath: '../../static/image/message_board_before.svg',
+    selectedIconPath: '../../static/image/message_board_after.svg'
+  },
+  {
+    id: 3,
     pagePath: '/pages/my/my',
     iconPath: '../../static/image/me_before.svg',
     selectedIconPath: '../../static/image/me_after.svg',

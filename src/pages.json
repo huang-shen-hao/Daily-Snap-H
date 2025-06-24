@@ -29,10 +29,10 @@
       "text": "中心"
     },
     {
-      "pagePath": "pages/square/square",
+      "pagePath": "pages/cook/index",
       "iconPath": "static/image/center_before.png",
       "selectedIconPath": "static/image/center_after.png",
-      "text": "广场"
+      "text": "菜谱"
     },
     {
       "pagePath": "pages/my/my",

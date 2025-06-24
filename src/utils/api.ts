@@ -3,6 +3,8 @@ import { GD_KEY } from '@/constant/index' //这个就是你在第一步申请的
 import { LoginForm, registerForm, weatherForm } from './interface'
 import globalStore from '../stores/global'
 
+const { VITE_APP_ID, VITE_APP_SECRET } = import.meta.env
+
 const global = globalStore()
 // 邮箱验证码发送
 export const sendEmailCode = (email: string) => {
@@ -376,5 +378,37 @@ export const AddSubTasks = (taskId: number, titles: string[]) => {
       taskId,
       titles
     }
+  })
+}
+
+// 菜品接口
+export const getCookCategory = () => {
+  return uni.request({
+    url: `https://www.mxnzp.com/api/cookbook/category?app_secret=${VITE_APP_SECRET}&app_id=${VITE_APP_ID}&category_id=2`,
+    method: 'GET'
+  })
+}
+
+// 根据菜谱分类id获取菜谱列表
+export const getCookListById = (cid: number, page = 1) => {
+  return uni.request({
+    url: `https://www.mxnzp.com/api/cookbook/list/category?app_secret=${VITE_APP_SECRET}&app_id=${VITE_APP_ID}&category_id=${cid}&page=${page}`,
+    method: 'GET'
+  })
+}
+
+// 根据菜谱id获取菜谱详情
+export const getCookDetailById = (fid: number) => {
+  return uni.request({
+    url: `https://www.mxnzp.com/api/cookbook/details?app_secret=${VITE_APP_SECRET}&app_id=${VITE_APP_ID}&id=${fid}`,
+    method: 'GET'
+  })
+}
+
+// 模糊查询
+export const getSearchData = (key: string, page = 1) => {
+  return uni.request({
+    url: `https://www.mxnzp.com/api/cookbook/search?app_secret=${VITE_APP_SECRET}&app_id=${VITE_APP_ID}&keyword=${key}&page=${page}`,
+    method: 'GET'
   })
 }

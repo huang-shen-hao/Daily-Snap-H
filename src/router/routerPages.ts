@@ -85,5 +85,23 @@ module.exports = [
     style: {
       navigationBarTitleText: '中心'
     }
+  },
+  {
+    path: 'pages/cook/index',
+    style: {
+      navigationStyle: 'custom'
+    }
+  },
+  {
+    path: 'pages/cook/detail',
+    style: {
+      navigationStyle: 'custom'
+    }
+  },
+  {
+    path: 'pages/cook/search',
+    style: {
+      navigationBarTitleText: '查询结果'
+    }
   }
 ]
