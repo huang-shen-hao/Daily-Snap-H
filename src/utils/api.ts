@@ -90,13 +90,11 @@ export const loginAndsaveUserInfo = async (param: LoginForm) => {
     })
     uni.setStorageSync('jwt', jwt)
     uni.showToast({
-      title: '登录成功，3s后跳转到个人中心',
-      icon: 'none',
-      duration: 3000
+      title: '登录成功',
+      icon: 'none'
     })
-    setTimeout(() => {
-      uni.switchTab({ url: '/pages/my/my' })
-    }, 3000)
+
+    uni.switchTab({ url: '/pages/my/my' })
   } else {
     const { message } = result
     uni.showToast({

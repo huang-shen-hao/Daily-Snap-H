@@ -144,23 +144,28 @@ const onSubChange = async (id: string, status: boolean) => {
   const res = await changeSubTaskStatus(id, !status)
   if (res.code === 0) {
     await getTasks()
-    uni.showToast({
-      title: res.message,
-      icon: 'none',
-      duration: 2000
-    })
+    // uni.showToast({
+    //   title: res.message,
+    //   icon: 'none',
+    //   duration: 2000
+    // })
   }
 }
 
 const addSub = async (id: string) => {
-  const res = await AddSubTask(id, subTaskName.value)
-  if (res.code === 0) {
-    await getTasks()
+  console.log('sss', subTaskName.value)
+  if (!subTaskName.value) {
     uni.showToast({
-      title: res.message,
+      title: '任务名不能为空',
       icon: 'none',
       duration: 2000
     })
+    return
+  }
+  const res = await AddSubTask(id, subTaskName.value)
+  if (res.code === 0) {
+    await getTasks()
+
     subTaskName.value = ''
   }
 }
@@ -179,11 +184,11 @@ const chooseOpt = async (e: any, id: string, title: string) => {
     const res = await RemoveSubTask(id)
     if (res.code === 0) {
       await getTasks()
-      uni.showToast({
-        title: res.message,
-        icon: 'none',
-        duration: 2000
-      })
+      // uni.showToast({
+      //   title: res.message,
+      //   icon: 'none',
+      //   duration: 2000
+      // })
     }
   }
   if (e.detail.value === '1') {
@@ -248,11 +253,6 @@ const getTemplateInfo = async (info: any) => {
     const res2 = await AddSubTasks(res.data.id, info.detailList)
     if (res2.code === 0) {
       await getTasks()
-      uni.showToast({
-        title: res.message,
-        icon: 'none',
-        duration: 2000
-      })
     }
   }
 }

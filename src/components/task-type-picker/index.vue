@@ -70,6 +70,15 @@ const openTemplate = () => {
 }
 
 const create = async () => {
+  if (!taskName.value) {
+    uni.showToast({
+      title: '任务名称不能为空',
+      icon: 'none',
+      duration: 2000
+    })
+    return
+  }
+
   const res = await AddTask(taskName.value, chooseType.value)
   if (res.code === 0) {
     emit('createTask', res.message)

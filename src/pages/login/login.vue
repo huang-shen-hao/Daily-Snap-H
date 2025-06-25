@@ -4,7 +4,7 @@ import { loginAndsaveUserInfo } from '../../utils/api'
 
 const form = reactive<LoginForm>({
   email: '1467788588@qq.com',
-  password: '123456789'
+  password: '123456'
 })
 
 const rules = reactive({
