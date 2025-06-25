@@ -54,7 +54,7 @@ export const request = <T = AnyObject>(requestConfig: RequestConfig, customBaseU
         if (typeof data === 'string' || data instanceof ArrayBuffer) {
           throw new Error('非法的接口返回！')
         }
-        if (statusCode === 401) {
+        if (statusCode === 403) {
           // 清空登录状态
           global.$reset()
           // 清空本地存储的jwt

@@ -199,14 +199,19 @@ const chooseOpt = async (e: any, id: string, title: string) => {
 }
 
 const updateSub = async () => {
-  const res = await UpdateSubTask(updateSubId.value, updateTitle.value)
-  if (res.code === 0) {
-    await getTasks()
+  if (!updateTitle.value) {
     uni.showToast({
-      title: res.message,
+      title: '修改内容不能为空',
       icon: 'none',
       duration: 2000
     })
+    return
+  }
+
+  const res = await UpdateSubTask(updateSubId.value, updateTitle.value)
+  if (res.code === 0) {
+    await getTasks()
+
     showUpdateDialog.value = false
   }
 }
