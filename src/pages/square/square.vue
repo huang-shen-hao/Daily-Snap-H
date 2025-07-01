@@ -14,57 +14,80 @@
               class="delete"
               @click="deletePost(item.puid)"
               v-if="item.users_permissions_user.username === global.userInfo.username"
-              src="https://iili.io/3WJstv1.png"
+              src="https://daily-snap.oss-cn-hangzhou.aliyuncs.com/%E6%9B%B4%E5%A4%9A.svg"
               mode="scaleToFill"
             />
           </view>
         </view>
       </view>
       <view class="info-contain">
-        <view class="title"> {{ item.title }}</view>
+        <!-- <view class="title"> {{ item.title }}</view> -->
         <view class="content"> {{ item.content }}</view>
-        <view class="tools">
-          <image
-            calss="like"
-            v-show="item.isLike"
-            src="https://iili.io/3WDD4se.png"
-            @click="doUnLikePost(item.puid)"
-            mode="scaleToFill"
-          />
-          <image
-            calss="like"
-            v-show="!item.isLike"
-            src="https://iili.io/3VyQCrP.png"
-            @click="doLikePost(item.puid)"
-            mode="scaleToFill"
-          />
-          <image
-            calss="comment"
-            src="https://iili.io/3VyQBEB.png"
-            @click="openBox(item.puid, item.users_permissions_user.username)"
-            mode="scaleToFill"
-          />
+
+        <view v-if="item.img.length > 0" class="content-img">
+          <view v-for="s in item.img" :key="s" class="img-item">
+            <image class="img" :src="s" mode="scaleToFill" />
+          </view>
+        </view>
+        <view class="content-footer">
+          <view class="like-con" v-if="item.likes.length > 0">
+            <view
+              class="like-item"
+              v-for="like in item.likes.length > 3 ? item.likes.slice(0, 3) : item.likes"
+              :key="like.uuid"
+            >
+              <image class="like-avatar" :src="like.avatar" mode="scaleToFill" />
+            </view>
+            <view class="like-item">
+              <view class="like-avatar num">+{{ item.likes.length }}</view>
+            </view>
+            <view class="text">觉得很赞</view>
+          </view>
+
+          <view class="tools">
+            <view>
+              <image
+                class="like"
+                v-show="item.isLike"
+                src="https://daily-snap.oss-cn-hangzhou.aliyuncs.com/%E5%B7%B2%E7%82%B9%E8%B5%9E.svg"
+                @click="doUnLikePost(item.puid)"
+                mode="scaleToFill"
+              />
+              <image
+                class="like"
+                v-show="!item.isLike"
+                src="https://daily-snap.oss-cn-hangzhou.aliyuncs.com/%E6%9C%AA%E7%82%B9%E8%B5%9E.svg"
+                @click="doLikePost(item.puid)"
+                mode="scaleToFill"
+              />
+              <text class="desc" v-show="item.isLike" @click="doUnLikePost(item.puid)">点赞</text>
+              <text class="desc" v-show="!item.isLike" @click="doLikePost(item.puid)">取消</text>
+            </view>
+
+            <view @click="openBox(item.puid, item.users_permissions_user.username)">
+              <image
+                class="comment"
+                src="https://daily-snap.oss-cn-hangzhou.aliyuncs.com/%E8%AF%84%E8%AE%BA.svg"
+                mode="scaleToFill"
+              />
+              <text class="desc">评论</text>
+            </view>
+          </view>
         </view>
       </view>
 
-      <view class="like-con" v-if="item.likes.length > 0">
-        <view
-          class="like-item"
-          v-for="like in item.likes.length > 3 ? item.likes.slice(0, 3) : item.likes"
-          :key="like.uuid"
-        >
-          <image class="like-avatar" :src="like.avatar" mode="scaleToFill" />
-        </view>
-        <view class="text">等{{ item.likes.length }}人觉得很赞</view>
-      </view>
-
-      <CommentBox :child-list="item.child" :reply-user-name="item.users_permissions_user.username" @delete="refresh" />
+      <CommentBox
+        v-show="item.child.length > 0"
+        :child-list="item.child"
+        :reply-user-name="item.users_permissions_user.username"
+        @delete="refresh"
+      />
     </view>
 
     <!-- 评论框 -->
     <CommentPop v-show="global.showCommentDialog" @comfirm="refresh" />
 
-    <view class="add" @click="toAddPage"> 发帖 </view>
+    <!-- <view class="add" @click="toAddPage"> 发帖 </view> -->
   </view>
   <my-tab-bar :selected="1" />
 </template>
@@ -181,8 +204,10 @@ const doUnLikePost = async (puid: string) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #e2e2e2;
-  padding: 20px 20px 500rpx 20rpx;
+  box-sizing: border-box;
+  padding-top: 24rpx;
+  padding-bottom: calc(130rpx + constant(safe-area-inset-bottom));
+  padding-bottom: calc(130rpx + env(safe-area-inset-bottom));
 
   .add {
     width: 200rpx;
@@ -206,17 +231,15 @@ const doUnLikePost = async (puid: string) => {
     width: 100%;
     border-radius: 20rpx;
     box-sizing: border-box;
-    background-color: #fff;
-    margin: 20rpx 0;
-
+    padding: 0 40rpx;
+    box-sizing: border-box;
+    margin-bottom: 60rpx;
     .info {
       width: 100%;
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      padding: 20rpx;
-      box-sizing: border-box;
-      border-bottom: 2rpx solid rgb(206 206 206);
+      margin-bottom: 24rpx;
       position: relative;
 
       .delete {
@@ -229,12 +252,12 @@ const doUnLikePost = async (puid: string) => {
       }
 
       .avatar {
-        width: 90rpx;
-        height: 90rpx;
-        border-radius: 50%;
+        width: 88rpx;
+        height: 88rpx;
+        border-radius: 20rpx;
         overflow: hidden;
-        margin-right: 20rpx;
-
+        margin-right: 24rpx;
+        flex-shrink: 0;
         image {
           width: 100%;
           height: 100%;
@@ -249,29 +272,37 @@ const doUnLikePost = async (puid: string) => {
 
         // will-change: transform;
         .name {
-          color: #000;
-          font-size: 30rpx;
-          font-weight: 600;
+          font-family:
+            Alibaba PuHuiTi,
+            Alibaba PuHuiTi;
+          font-weight: bold;
+          font-size: 32rpx;
+          color: #333333;
+          line-height: 40rpx;
+          text-align: left;
+          font-style: normal;
+          text-transform: none;
           margin-bottom: 8rpx;
         }
 
         .time {
-          width: 100%;
-          padding: 6rpx 0;
-          display: flex;
-          align-items: center;
-          justify-content: flex-start;
-          font-size: 18rpx;
-          color: #333;
-          position: relative;
+          font-family:
+            PingFang SC,
+            PingFang SC;
+          font-weight: 400;
+          font-size: 24rpx;
+          color: #999999;
+          line-height: 40rpx;
+          text-align: left;
+          font-style: normal;
+          text-transform: none;
 
           .delete {
-            width: 20rpx;
-            height: 20rpx;
+            width: 48rpx;
+            height: 48rpx;
             position: absolute;
-            left: 200rpx;
-            top: 50%;
-            transform: translateY(-50%);
+            right: 0;
+            bottom: 0;
           }
         }
       }
@@ -283,9 +314,13 @@ const doUnLikePost = async (puid: string) => {
       align-items: center;
       justify-content: flex-start;
       flex-direction: column;
-      padding: 20rpx;
+
       box-sizing: border-box;
-      border-bottom: 2rpx solid rgb(206 206 206);
+      background: #f6f6f6;
+      border-radius: 0rpx 40rpx 40rpx 40rpx;
+      padding: 24rpx 32rpx 32rpx 32rpx;
+      margin-top: 24rpx;
+      margin-bottom: 22rpx;
 
       .title,
       .content {
@@ -294,55 +329,121 @@ const doUnLikePost = async (puid: string) => {
       }
 
       .title {
+        font-family:
+          PingFang SC,
+          PingFang SC;
+        font-weight: 600;
         font-size: 28rpx;
-        color: #000;
-        margin-bottom: 10rpx;
+        color: #333333;
+        line-height: 44rpx;
+        text-align: left;
+        font-style: normal;
+        text-transform: none;
       }
 
       .content {
-        font-size: 24rpx;
-        color: #999;
-
-        // text-indent: 2rem;
+        font-family:
+          PingFang SC,
+          PingFang SC;
+        font-weight: 500;
+        font-size: 28rpx;
+        color: #333333;
+        line-height: 44rpx;
+        text-align: left;
+        font-style: normal;
+        text-transform: none;
       }
 
-      .tools {
+      .content-img {
+        margin-top: 24rpx;
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, 190rpx);
+        grid-template-rows: 190rpx;
+        gap: 16rpx;
+        .img-item {
+          width: 100%;
+          height: 100%;
+          .img {
+            border-radius: 20rpx;
+            width: 100%;
+            height: 100%;
+          }
+        }
+      }
+      .content-footer {
         width: 100%;
         display: flex;
         align-items: center;
-        justify-content: flex-end;
-        margin-top: 30rpx;
+        justify-content: space-between;
+        margin-top: 24rpx;
+        .tools {
+          display: flex;
+          flex: 1;
+          align-items: center;
+          justify-content: flex-end;
 
-        image {
-          width: 40rpx;
-          height: 40rpx;
-          margin: 0 20rpx;
+          view {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          view .desc {
+            font-family:
+              PingFang SC,
+              PingFang SC;
+            font-weight: 600;
+            font-size: 24rpx;
+            color: #999999;
+            line-height: 40rpx;
+            text-align: center;
+            font-style: normal;
+            text-transform: none;
+          }
+
+          view image {
+            width: 56rpx;
+            height: 56rpx;
+            margin: 0 16rpx;
+          }
         }
-      }
-    }
+        .like-con {
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
 
-    .like-con {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding: 20rpx;
-      box-sizing: border-box;
-      border-bottom: 2rpx solid rgb(206 206 206);
+          flex: 1;
+          .like-item {
+            .like-avatar {
+              display: block;
+              width: 56rpx;
+              height: 56rpx;
+              border-radius: 50%;
+            }
+            .num {
+              background: #e6e6e6;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-family:
+                Alibaba PuHuiTi,
+                Alibaba PuHuiTi;
+              font-weight: bold;
+              font-size: 24rpx;
+              color: #999999;
+            }
+          }
+          .like-item:not(:first-child) {
+            margin-left: -12rpx;
+          }
 
-      .like-item {
-        .like-avatar {
-          display: block;
-          width: 60rpx;
-          height: 60rpx;
-          border-radius: 50%;
+          .text {
+            font-size: 24rpx;
+            color: #666;
+            margin-left: 10rpx;
+          }
         }
-      }
-
-      .text {
-        font-size: 24rpx;
-        color: #666;
-        margin-left: 10rpx;
       }
     }
 

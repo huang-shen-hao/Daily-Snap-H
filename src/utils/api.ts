@@ -20,6 +20,29 @@ export const sendEmailCode = (email: string) => {
   })
 }
 
+// 人机校验生成
+export const generateCaptcha = () => {
+  return request({
+    url: 'api/captcha/generate',
+    method: 'GET'
+  })
+}
+// 人机校验验证
+export const verifyCaptcha = (key: string, answer: string) => {
+  return request({
+    url: 'api/captcha/verify',
+    method: 'POST',
+    fullRes: true,
+    header: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    data: {
+      key,
+      answer
+    }
+  })
+}
+
 // 用户注册
 export const register = (param: registerForm) => {
   return request({
@@ -94,7 +117,7 @@ export const loginAndsaveUserInfo = async (param: LoginForm) => {
       icon: 'none'
     })
 
-    uni.switchTab({ url: '/pages/my/my' })
+    uni.switchTab({ url: '/pages/home/home' })
   } else {
     const { message } = result
     uni.showToast({
@@ -163,6 +186,14 @@ export const getWeather = (param: weatherForm) => {
     },
     'http://apis.juhe.cn/'
   )
+}
+
+// 获取IP地址
+export const getUserIp = () => {
+  return uni.request({
+    url: `https://www.mxnzp.com/api/ip/self?app_secret=${VITE_APP_SECRET}&app_id=${VITE_APP_ID}`,
+    method: 'GET'
+  })
 }
 
 // 高德地图逆向经纬度

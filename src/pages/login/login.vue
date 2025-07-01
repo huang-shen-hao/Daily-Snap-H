@@ -62,7 +62,7 @@ onLoad(() => {
   const token = uni.getStorageSync('jwt')
   if (token) {
     uni.switchTab({
-      url: '/pages/my/my'
+      url: '/pages/home/home'
     })
   }
 })

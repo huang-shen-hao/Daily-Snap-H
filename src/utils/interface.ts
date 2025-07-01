@@ -42,6 +42,7 @@ export interface ICommentItem {
   id: number
   kind: string
   likes: any[] // 点赞列表，具体可根据实际改成更细粒度类型 :contentReference[oaicite:1]{index=1}
+  img: any[]
   locale: string | null
   pid: string | null
   publishedAt: string | null

@@ -17,10 +17,6 @@ defineProps({
     type: String,
     default: ''
   },
-  isTab: {
-    type: Boolean,
-    default: false
-  },
   showAvatar: {
     type: Boolean,
     default: true
@@ -32,6 +28,11 @@ defineProps({
   childList: {
     type: Array as PropType<ICommentItem[]>,
     default: () => [] as ICommentItem[]
+  },
+  // 是否一级回复
+  isTop: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -61,39 +62,47 @@ const deletePost = async (puid: string) => {
 }
 </script>
 <template>
-  <view class="comment-area">
+  <view class="comment-area" :class="{ 'is-top': isTop }">
     <template v-if="Array.isArray(childList) && childList.length > 0">
-      <view v-for="item in childList" :key="item.documentId" class="comment-item" :class="{ deep: isTab }">
-        <view class="line" :class="{ tab: isTab }">
-          <view class="avatar" v-show="showAvatar">
+      <view v-for="item in childList" :key="item.documentId" class="comment-item" :class="{ 'is-reply': !isTop }">
+        <view class="line">
+          <view class="avatar" :class="{ 'is-reply': !isTop }" v-show="showAvatar">
             <image :src="item.users_permissions_user.avatar" mode="scaleToFill" />
           </view>
 
           <view class="info-detail">
-            <view class="name" @click="openBox(item.puid, item.users_permissions_user.username)">{{
-              item.users_permissions_user.username
-            }}</view>
-            <view class="content" @click="openBox(item.puid, item.users_permissions_user.username)">
-              <text v-if="isTab">回复@{{ replyUserName }}：</text> {{ item.content }}</view
+            <view class="name">
+              <text> {{ item.users_permissions_user.username }} </text>
+
+              <text class="reply-name" v-if="!isTop">{{ replyUserName }}</text>
+            </view>
+
+            <view
+              class="content"
+              :class="{ 'is-reply': !isTop }"
+              @click="openBox(item.puid, item.users_permissions_user.username)"
             >
-            <view class="time" v-show="showTime">
+              {{ item.content }}
+            </view>
+            <view class="time" :class="{ 'is-reply': !isTop }" v-show="showTime">
               <text>{{ formatTime(item.createdAt) }}</text>
-              <image
-                class="delete"
+
+              <text
                 @click="deletePost(item.puid)"
                 v-if="item.users_permissions_user.username === global.userInfo.username"
-                src="https://iili.io/3WJstv1.png"
-                mode="scaleToFill"
-              />
+                class="delete"
+                >删除</text
+              >
+              <text v-else class="reply" @click="openBox(item.puid, item.users_permissions_user.username)">回复</text>
             </view>
           </view>
         </view>
 
         <!-- 二级回复 缩进-->
         <CommentBox
+          :is-top="false"
           :child-list="item.child"
           :reply-user-name="item.users_permissions_user.username"
-          :isTab="true"
           @delete="handleChildDelete"
         />
       </view>
@@ -107,15 +116,24 @@ const deletePost = async (puid: string) => {
 .comment-area {
   width: 100%;
   box-sizing: border-box;
+  background: #f6f6f6;
+  border-radius: 40rpx;
+  &.is-top {
+    padding: 32rpx;
+  }
 
   .comment-item {
     width: 100%;
     box-sizing: border-box;
-    padding: 20rpx;
   }
 
-  .comment-item.deep {
-    padding: 20rpx 0;
+  .comment-item.is-reply {
+    padding-left: 80rpx;
+    margin-top: 24rpx;
+  }
+
+  .comment-item.is-reply .comment-item.is-reply {
+    padding-left: 0; /* 重置缩进 */
   }
 
   .line {
@@ -125,12 +143,16 @@ const deletePost = async (puid: string) => {
     box-sizing: border-box;
 
     .avatar {
-      width: 60rpx;
-      height: 60rpx;
+      width: 64rpx;
+      height: 64rpx;
       border-radius: 50%;
-      background-color: red;
       overflow: hidden;
-      margin-right: 20rpx;
+      margin-right: 16rpx;
+      flex-shrink: 0;
+      &.is-reply {
+        width: 40rpx;
+        height: 40rpx;
+      }
 
       image {
         width: 100%;
@@ -145,35 +167,81 @@ const deletePost = async (puid: string) => {
       justify-content: center;
 
       .name {
-        color: #000;
-        font-size: 500;
+        font-family:
+          PingFang SC,
+          PingFang SC;
+        font-weight: 500;
         font-size: 24rpx;
+        color: #999999;
+        text-align: left;
+        font-style: normal;
+        text-transform: none;
         margin-bottom: 8rpx;
+      }
+
+      .reply-name {
+        padding-left: 48rpx;
+        position: relative;
+        &::before {
+          content: '';
+          position: absolute;
+
+          width: 0;
+          height: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          left: 16rpx;
+          border-top: 14rpx solid transparent;
+          border-bottom: 14rpx solid transparent;
+          border-left: 14rpx solid #d9d9d9; /* 调整颜色/尺寸 */
+        }
       }
 
       .content {
-        font-size: 18rpx;
-        color: #333;
-        margin-bottom: 8rpx;
+        font-family:
+          PingFang SC,
+          PingFang SC;
+        font-weight: 500;
+        font-size: 28rpx;
+        color: #333333;
+        text-align: left;
+        font-style: normal;
+        text-transform: none;
+        margin-bottom: 16rpx;
+        &.is-reply {
+          transform: translateX(-52rpx);
+          margin-top: 20rpx;
+        }
       }
 
       .time {
-        width: 100%;
-        padding: 6rpx 0;
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        font-size: 18rpx;
-        color: #333;
-        position: relative;
+        font-family:
+          PingFang SC,
+          PingFang SC;
+        font-weight: 400;
+        font-size: 24rpx;
+        color: #aaaaaa;
+        line-height: 40rpx;
+        text-align: left;
+        font-style: normal;
+        text-transform: none;
+        &.is-reply {
+          transform: translateX(-52rpx);
+        }
 
+        .reply,
         .delete {
-          width: 20rpx;
-          height: 20rpx;
-          position: absolute;
-          left: 200rpx;
-          top: 50%;
-          transform: translateY(-50%);
+          padding-left: 40rpx;
+          font-family:
+            PingFang SC,
+            PingFang SC;
+          font-weight: 400;
+          font-size: 24rpx;
+          color: #d294ff;
+          line-height: 40rpx;
+          text-align: left;
+          font-style: normal;
+          text-transform: none;
         }
       }
     }

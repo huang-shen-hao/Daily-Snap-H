@@ -50,7 +50,7 @@ import dayjs from 'dayjs'
 import myTabBar from '@/components/my-tab-bar/index.vue'
 import globalStore from '@/stores/global'
 import { getAddress, removeArea } from '@/utils/tool'
-import { getWeather } from '@/utils/api'
+import { getWeather, getUserIp } from '@/utils/api'
 import { type realWeatherType } from '@/utils/interface'
 const global = globalStore()
 
