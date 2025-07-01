@@ -24,7 +24,7 @@
         <!-- <view class="title"> {{ item.title }}</view> -->
         <view class="content"> {{ item.content }}</view>
 
-        <view v-if="item.img.length > 0" class="content-img">
+        <view v-if="Array.isArray(item.img) && item.img.length > 0" class="content-img">
           <view v-for="s in item.img" :key="s" class="img-item">
             <image class="img" :src="s" mode="scaleToFill" />
           </view>
