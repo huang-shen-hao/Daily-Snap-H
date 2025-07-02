@@ -50,11 +50,13 @@ const chooseTypeIndex = ref<number>(0)
 const taskTypeList = ['不重复', '按天', '按周', '按月']
 
 const chooseTaskType = (e: any) => {
-  chooseTypeIndex.value = e.detail.value
-  if (e.detail.value === 0) chooseType.value = 'once'
-  if (e.detail.value === 1) chooseType.value = 'daily'
-  if (e.detail.value === 2) chooseType.value = 'weekly'
-  if (e.detail.value === 3) chooseType.value = 'monthly'
+  const index = Number(e.detail.value)
+  chooseTypeIndex.value = index
+
+  if (index === 0) chooseType.value = 'once'
+  if (index === 1) chooseType.value = 'daily'
+  if (index === 2) chooseType.value = 'weekly'
+  if (index === 3) chooseType.value = 'monthly'
 }
 
 const emit = defineEmits(['update:modelValue', 'openTemplate', 'createTask'])
