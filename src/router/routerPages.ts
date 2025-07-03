@@ -1,5 +1,11 @@
 module.exports = [
   {
+    path: 'pages/task/daily',
+    style: {
+      navigationStyle: 'custom'
+    }
+  },
+  {
     path: 'pages/home/home',
     style: {
       navigationStyle: 'custom' //禁用uni-app默认的头部导

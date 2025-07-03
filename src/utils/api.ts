@@ -410,6 +410,16 @@ export const AddSubTasks = (taskId: number, titles: string[]) => {
   })
 }
 
+export const getDailyTaskProcess = (taskId: number, year: string, month: string) => {
+  return request({
+    url: `api/ds-task-shot/getTaskShot?id=${taskId}&year=${year}&month=${month}`,
+    method: 'GET',
+    header: {
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    }
+  })
+}
+
 // 菜品接口
 export const getCookCategory = () => {
   return uni.request({
