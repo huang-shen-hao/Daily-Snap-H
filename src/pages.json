@@ -23,16 +23,10 @@
       "selectedIconPath": "static/image/home_after.png",
       "text": "首页"
     }, {
-      "pagePath": "pages/square/square",
+      "pagePath": "pages/center/center",
       "iconPath": "static/image/center_before.png",
       "selectedIconPath": "static/image/center_after.png",
-      "text": "中心"
-    },
-    {
-      "pagePath": "pages/cook/index",
-      "iconPath": "static/image/center_before.png",
-      "selectedIconPath": "static/image/center_after.png",
-      "text": "菜谱"
+      "text": "探索"
     },
     {
       "pagePath": "pages/my/my",

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { sendEmailCode, verifyCaptcha, generateCaptcha, registerAndsaveUserInfo } from '@/utils/api'
 const registerForm = reactive({
-  email: '1467788588@qq.com',
+  email: '',
   username: '',
   password: '',
   code: ''
@@ -48,10 +48,9 @@ const closeCapture = () => {
 }
 const getCapture = async () => {
   const res = await generateCaptcha()
-  if (res.code === 0) {
-    const { data } = res
-    key.value = data.key
-    svg.value = data.svg
+  if (res && res.key && res.svg) {
+    key.value = res.key
+    svg.value = res.svg
     showCapture.value = true
   }
 }
@@ -70,26 +69,34 @@ const submitCapture = async () => {
 
   const res = await verifyCaptcha(key.value, answer.value)
 
-  if (res.data && res.data.code === 0 && res.data.data.valid) {
-    const ress = await sendEmailCode(registerForm.email)
-    const { code, message } = ress
-    if (code === 0) {
+  if (res && res.valid) {
+    const res2 = await sendEmailCode(registerForm.email)
+    console.log('--res', res2)
+    if (res2 && res2.code) {
       closeCapture()
       uni.showToast({
-        title: message,
+        title: '验证码已经发送',
         icon: 'none',
         duration: 2000
       })
       codeTag.value = true
+      return
+    } else {
+      refreshCapture()
+      uni.showToast({
+        title: '网络异常请重试',
+        icon: 'none',
+        duration: 2000
+      })
     }
-    return
+  } else {
+    refreshCapture()
+    uni.showToast({
+      title: '答案错误',
+      icon: 'none',
+      duration: 2000
+    })
   }
-  refreshCapture()
-  uni.showToast({
-    title: '答案错误',
-    icon: 'none',
-    duration: 2000
-  })
 }
 const getCode = async () => {
   const regx = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
@@ -140,8 +147,7 @@ const register = () => {
       duration: 2000
     })
   }
-
-  if (!codeTag.value || !key.value) {
+  if (!codeTag.value) {
     return uni.showToast({
       title: '请先获取验证码',
       icon: 'none',

@@ -37,7 +37,8 @@ const cookName = ref<string>('')
 
 const getData = async (key: string, page = 1) => {
   const res = await getSearchData(key, page)
-  cookList.value = res.data.data.list
+  console.log('sssss', res)
+  cookList.value = res.list
 }
 
 const search = () => {
@@ -67,7 +68,7 @@ const getMoreFood = async () => {
   try {
     const resC = await getSearchData(key.value, currentPage.value)
     // 兼容后端返回格式
-    const list = Array.isArray(resC?.data?.data?.list) ? resC.data.data.list : []
+    const list = Array.isArray(resC?.list) ? resC.list : []
     // 如果本次返回没有数据，说明到底了
     if (list.length === 0) {
       finished.value = true

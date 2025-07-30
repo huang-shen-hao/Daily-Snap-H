@@ -47,14 +47,14 @@ const openBox = (id: string, username: string) => {
 
 const emit = defineEmits(['delete'])
 
-const deletePost = async (puid: string) => {
+const deletePost = async (id: number) => {
   uni.showModal({
     title: '提示',
     content: '确定删除该评论吗？',
     success: async res => {
       if (res.confirm) {
         console.log('删除')
-        const res = await deletePostByPuid(puid)
+        const res = await deletePostByPuid(id)
         if (res.code === 0) handleChildDelete()
       }
     }
@@ -88,7 +88,7 @@ const deletePost = async (puid: string) => {
               <text>{{ formatTime(item.createdAt) }}</text>
 
               <text
-                @click="deletePost(item.puid)"
+                @click="deletePost(item.id)"
                 v-if="item.users_permissions_user.username === global.userInfo.username"
                 class="delete"
                 >删除</text

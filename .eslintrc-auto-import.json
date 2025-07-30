@@ -111,6 +111,9 @@
     "stores": true,
     "user": true,
     "GD_KEY": true,
-    "global": true
+    "global": true,
+    "UseStatusHeight": true,
+    "useFormatYYMMDD": true,
+    "PALETTE": true
   }
 }

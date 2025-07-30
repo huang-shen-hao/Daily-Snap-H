@@ -4,7 +4,7 @@
     <view class="calendar-con" :style="{ paddingTop: `${safe}px` }" :class="[flodStatus ? 'flod' : 'unflod']">
       <!-- 头部 -->
       <view class="calendar-header" :style="{ height: `${height + 30}px` }">
-        <view class="date" :style="{ height: `${height}px` }"> {{ current.format('YYYY-MM-DD') }}</view>
+        <view class="date" :style="{ height: `${height}px` }"> {{ current.format('YY-MM-DD') }}</view>
         <!-- 星期标题 -->
         <view class="calendar-week">
           <view class="calendar-cell" v-for="w in ['日', '一', '二', '三', '四', '五', '六']" :key="w">
@@ -39,8 +39,6 @@
         </swiper-item>
       </swiper>
 
-      <view class="back" @click="backToday">回到今日</view>
-
       <view class="arrow" @click="flod">
         <image
           class="img"
@@ -49,41 +47,13 @@
         />
       </view>
     </view>
-    <view class="add" @click="goAdd">
-      <image
-        class="icon"
-        src="https://trial-cdn.esign.cn/upload/adc62c22-14ad-593c-ab2b-e43e87a576c6!!7-28.svg"
-        mode="widthFix"
-      />
-    </view>
-    <scroll-view
-      class="task-list"
-      scroll-y
-      :style="{ background: `url(${bk}) no-repeat center` }"
-      :class="[flodStatus ? 'flod' : 'unflod']"
-    >
-      <view v-for="item in taskList" :key="item.id" class="task-item">
-        <view class="task-name">{{ item.name }}</view>
-      </view>
-    </scroll-view>
   </view>
-  <my-tab-bar :selected="0" />
 </template>
 
 <script setup lang="ts">
-import myTabBar from '@/components/my-tab-bar/index.vue'
-import { formatYYMMDD } from '@/utils/tool'
 import { UseStatusHeight } from '@/hooks'
 import dayjs from 'dayjs'
 import { ref } from 'vue'
-import { getUserAllTask } from '@/utils/api'
-
-const bk = ref<string>('https://daily-snap.oss-cn-hangzhou.aliyuncs.com/ce3bc.jpg')
-
-onShow(() => {
-  uni.hideTabBar()
-  bk.value = uni.getStorageSync('HOME_BK')
-})
 
 // 折叠状态 默认展开 展示月  折叠展开周
 const flodStatus = ref<boolean>(false)
@@ -149,7 +119,7 @@ const getMonthDays = (year: number, month: number) => {
  */
 const getWeekDays = (year: number, month: number, day: number) => {
   // 构造当前日期
-  const current = dayjs(`${year}-${month}-${day}`, 'YYYY-MM-DD')
+  const current = dayjs(`${year}-${month}-${day}`, 'YYYY-M-D')
   // 获取该日是周几（0-6，0 是周日）
   const weekDay = current.day()
   // 计算本周的起始日期（周日）
@@ -193,8 +163,42 @@ const changeChooseDate = (date: string) => {
     chooseDate.value.month() + 1,
     chooseDate.value.date()
   )
-  getTasks(chooseDate.value.format('YYYY-MM-DD'))
+  console.log('changeChooseDate', weekList.value)
 }
+
+// 根据 current 值，重建三个月的数据
+const rebuildmonthList = () => {
+  const prev = current.value.subtract(1, 'month')
+  const next = current.value.add(1, 'month')
+  monthList.value = [
+    getMonthDays(prev.year(), prev.month() + 1),
+    getMonthDays(current.value.year(), current.value.month() + 1),
+    getMonthDays(next.year(), next.month() + 1)
+  ]
+}
+
+/**
+ * 根据 reactive current 值，重建三周的数据
+ * weekList.value = [上一周, 当前周, 下一周]
+ */
+const rebuildWeekList = () => {
+  // 假设 current 是一个包含 dayjs 实例的 ref
+  const prev = chooseDate.value.subtract(7, 'day')
+  const next = chooseDate.value.add(7, 'day')
+
+  weekList.value = [
+    getWeekDays(prev.year(), prev.month() + 1, prev.date()),
+    getWeekDays(chooseDate.value.year(), chooseDate.value.month() + 1, chooseDate.value.date()),
+    getWeekDays(next.year(), next.month() + 1, next.date())
+  ]
+}
+
+onLoad(() => {
+  rebuildmonthList()
+  rebuildWeekList()
+  // console.log('=========M===========', monthList.value)
+  // console.log('=========W==========', weekList.value)
+})
 
 const lastIndex = ref<number>(1) // 初始为1
 const currentIndex = ref<number>(1) // 一共是 0 1 2 默认展示 1 下标数据
@@ -269,117 +273,15 @@ const onSwiperChange = (e: any) => {
   }
   console.log('data', flodStatus.value ? weekList.value[currentIndex.value] : monthList.value[currentIndex.value])
   lastIndex.value = currentIndex.value // 重置为中间
-
-  getTasks(chooseDate.value.format('YYYY-MM-DD'))
-}
-
-// 根据 current 值，重建三个月的数据
-const rebuildmonthList = () => {
-  const prev = current.value.subtract(1, 'month')
-  const next = current.value.add(1, 'month')
-  monthList.value = [
-    getMonthDays(prev.year(), prev.month() + 1),
-    getMonthDays(current.value.year(), current.value.month() + 1),
-    getMonthDays(next.year(), next.month() + 1)
-  ]
-}
-
-/**
- * 根据 reactive current 值，重建三周的数据
- * weekList.value = [上一周, 当前周, 下一周]
- */
-const rebuildWeekList = () => {
-  // 假设 current 是一个包含 dayjs 实例的 ref
-  const prev = chooseDate.value.subtract(7, 'day')
-  const next = chooseDate.value.add(7, 'day')
-
-  weekList.value = [
-    getWeekDays(prev.year(), prev.month() + 1, prev.date()),
-    getWeekDays(chooseDate.value.year(), chooseDate.value.month() + 1, chooseDate.value.date()),
-    getWeekDays(next.year(), next.month() + 1, next.date())
-  ]
-}
-
-const taskList = ref<any[]>([])
-
-// 获取任务列表
-const getTasks = async (date: string) => {
-  // 页面加载时的逻辑
-  const res = await getUserAllTask(date)
-  if (res.code === 0) {
-    // 统计每个任务已完成的子任务数量
-    taskList.value = res.data.map((task: any) => {
-      const finish_count =
-        Array.isArray(task.sub_tasks) && task.sub_tasks.length > 0
-          ? task.sub_tasks.filter((sub: any) => sub.isComplete).length
-          : 0
-      return {
-        ...task,
-        finish_count
-      }
-    })
-  }
-}
-
-// 新建任务完成时会有日期变化  优化
-const refreshData = (date: string) => {
-  current.value = dayjs(date)
-  chooseDate.value = dayjs(date)
-  console.log('KKKKKKKKKKKKKKKKK', date, swiperIndex.value, currentIndex.value, monthList.value)
-  getTasks(date)
-  rebuildmonthList()
-  rebuildWeekList()
-  // 动态修改数据
-  weekList.value[currentIndex.value] = weekList.value[1]
-  monthList.value[currentIndex.value] = monthList.value[1]
-}
-
-// 主动暴露出去
-defineExpose({ refreshData })
-
-const backToday = () => {
-  refreshData(dayjs().format('YYYY-MM-DD'))
-}
-
-onLoad(() => {
-  rebuildmonthList()
-  rebuildWeekList()
-  // 获取任务列表
-  getTasks(formatYYMMDD())
-})
-
-const goAdd = () => {
-  uni.navigateTo({
-    url: '/pages/home/add'
-  })
 }
 </script>
 
 <style lang="scss" scoped>
 .con {
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  .add {
-    width: 80rpx;
-    height: 80rpx;
-    background: #508ce7;
-    border-radius: 10rpx;
-    position: fixed;
-    right: 24rpx;
-    top: 80%;
-    box-sizing: border-box;
-    padding: 20rpx;
-    z-index: 999;
-    .icon {
-      width: 100%;
-      height: 100%;
-    }
-  }
+  box-sizing: border-box;
 }
 .calendar-con {
-  background-image: linear-gradient(120deg, rgba(59, 115, 211, 0.1) 0%, rgba(147, 221, 255, 0.2) 100%);
+  background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
   height: 660rpx;
   position: relative;
   transition: all 0.2s ease-in;
@@ -387,16 +289,6 @@ const goAdd = () => {
 
   &.flod {
     height: 240rpx;
-  }
-  .back {
-    position: absolute;
-    bottom: 10rpx;
-    right: 30rpx;
-    padding: 10rpx 16rpx;
-    background: #242424;
-    color: #fff;
-    font-size: 24rpx;
-    border-radius: 20rpx;
   }
   .arrow {
     position: absolute;
@@ -471,44 +363,14 @@ const goAdd = () => {
             color: #5c5b5b;
           }
           &.selected {
-            background-color: rgba(74, 166, 209, 0.2);
+            background-color: #2c97c9;
           }
 
           &.today {
-            border: 2rpx solid rgb(161, 175, 255);
+            border: 2rpx solid rgb(255, 255, 255);
           }
         }
       }
-    }
-  }
-}
-
-.task-list {
-  height: calc(100vh - 720rpx);
-
-  width: 100%;
-  background-size: cover !important;
-  padding: 30rpx;
-  box-sizing: border-box;
-  padding-bottom: 200rpx;
-  // display: grid;
-  // grid-template-columns: 1;
-  // grid-auto-rows: 200rpx;
-
-  &.flod {
-    height: calc(100vh - 340rpx);
-  }
-  .task-item {
-    background: #fff;
-    height: 120rpx;
-    width: 100%;
-    border-radius: 24rpx;
-    padding: 20rpx;
-    box-sizing: border-box;
-    margin-bottom: 20rpx;
-    .task-name {
-      font-weight: 600;
-      font-size: 32rpx;
     }
   }
 }

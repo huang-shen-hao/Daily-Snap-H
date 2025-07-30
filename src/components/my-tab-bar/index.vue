@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import globalStore from '@/stores/global'
 const global = reactive(globalStore())
-const props = defineProps({
+defineProps({
   // 这里可以定义 props
   selected: {
     type: Number,
@@ -19,20 +19,13 @@ const tabbarList = [
   },
   {
     id: 1,
-    pagePath: '/pages/square/square',
-    text: '留言板',
+    pagePath: '/pages/center/center',
+    text: '探索',
     iconPath: '../../static/image/message_board_before.svg',
     selectedIconPath: '../../static/image/message_board_after.svg'
   },
   {
     id: 2,
-    pagePath: '/pages/cook/index',
-    text: '菜谱',
-    iconPath: '../../static/image/message_board_before.svg',
-    selectedIconPath: '../../static/image/message_board_after.svg'
-  },
-  {
-    id: 3,
     pagePath: '/pages/my/my',
     iconPath: '../../static/image/me_before.svg',
     selectedIconPath: '../../static/image/me_after.svg',
@@ -44,24 +37,10 @@ const changeTabbar = (path: string) => {
   uni.switchTab({ url: path })
 }
 
-const boxRef = ref()
-
 // 计算当前应该移动到的偏移（百分比）
 const offset = ref<number>(0)
 
 offset.value = global.previewTabIndex * 100
-
-// const previewIndex = ref<number>(0)
-// watch(
-//   () => global.previewTabIndex,
-//   (newV, oldV) => {
-//     previewIndex.value = oldV
-//     const step = (props.selected - previewIndex.value) * 100
-//     console.log('===============:', offset.value, step)
-//     // 将 offset 设置为 newIndex * step
-//     // offset.value = offset.value + (props.selected - previewIndex.value) * 100
-//   }
-// )
 </script>
 <template>
   <view class="custom-tab-bar">
@@ -84,7 +63,7 @@ offset.value = global.previewTabIndex * 100
 .custom-tab-bar {
   width: calc(100% - 80rpx);
   height: 118rpx;
-  border-radius: 40rpx;
+  border-radius: 46rpx;
   position: fixed;
   bottom: 68rpx;
   // bottom: calc(68rpx + constant(safe-area-inset-bottom));

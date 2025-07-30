@@ -1,105 +1,106 @@
 <template>
-  <view class="container">
-    <view class="fa" v-for="item in list" :key="item.documentId">
-      <view class="info">
-        <view class="avatar">
-          <image :src="item.users_permissions_user.avatar" mode="scaleToFill" />
-        </view>
+  <view class="container" :style="{ paddingTop: `${safePadding}px` }">
+    <!-- 1. 主内容区：固定位置、scroll-view 承载 -->
+    <scroll-view class="list-container" scroll-y>
+      <view class="fa" v-for="item in list" :key="item.documentId">
+        <view class="info">
+          <view class="avatar">
+            <image :src="item.users_permissions_user.avatar" mode="scaleToFill" />
+          </view>
 
-        <view class="info-detail">
-          <view class="name">{{ item.users_permissions_user.username }}</view>
-          <view class="time">
-            <text>{{ formatTime(item.createdAt) }}</text>
-            <image
-              class="delete"
-              @click="deletePost(item.puid)"
-              v-if="item.users_permissions_user.username === global.userInfo.username"
-              src="https://daily-snap.oss-cn-hangzhou.aliyuncs.com/%E6%9B%B4%E5%A4%9A.svg"
-              mode="scaleToFill"
-            />
+          <view class="info-detail">
+            <view class="name">{{ item.users_permissions_user.username }}</view>
+            <view class="time">
+              <text>{{ formatTime(item.createdAt) }}</text>
+              <image
+                class="delete"
+                @click="deletePost(item.id)"
+                v-if="item.users_permissions_user.username === global.userInfo.username"
+                src="https://daily-snap.oss-cn-hangzhou.aliyuncs.com/%E6%9B%B4%E5%A4%9A.svg"
+                mode="scaleToFill"
+              />
+            </view>
           </view>
         </view>
+        <view class="info-contain">
+          <!-- <view class="title"> {{ item.title }}</view> -->
+          <view class="content"> {{ item.content }}</view>
+
+          <view v-if="Array.isArray(item.img) && item.img.length > 0" class="content-img">
+            <view v-for="s in item.img" :key="s" class="img-item">
+              <image class="img" :src="s" mode="scaleToFill" />
+            </view>
+          </view>
+          <view class="content-footer">
+            <view class="like-con" v-if="item.likes.length > 0">
+              <view
+                class="like-item"
+                v-for="like in item.likes.length > 3 ? item.likes.slice(0, 3) : item.likes"
+                :key="like.uuid"
+              >
+                <image class="like-avatar" :src="like.avatar" mode="scaleToFill" />
+              </view>
+              <view class="like-item">
+                <view class="like-avatar num">+{{ item.likes.length }}</view>
+              </view>
+              <view class="text">觉得很赞</view>
+            </view>
+
+            <view class="tools">
+              <view>
+                <image
+                  class="like"
+                  v-show="item.isLike"
+                  src="https://daily-snap.oss-cn-hangzhou.aliyuncs.com/%E5%B7%B2%E7%82%B9%E8%B5%9E.svg"
+                  @click="doUnLikePost(item.likes)"
+                  mode="scaleToFill"
+                />
+                <image
+                  class="like"
+                  v-show="!item.isLike"
+                  src="https://daily-snap.oss-cn-hangzhou.aliyuncs.com/%E6%9C%AA%E7%82%B9%E8%B5%9E.svg"
+                  @click="doLikePost(item.id)"
+                  mode="scaleToFill"
+                />
+                <text class="desc" v-show="item.isLike" @click="doUnLikePost(item.likes)">点赞</text>
+                <text class="desc" v-show="!item.isLike" @click="doLikePost(item.id)">取消</text>
+              </view>
+
+              <view @click="openBox(item.puid, item.users_permissions_user.username)">
+                <image
+                  class="comment"
+                  src="https://daily-snap.oss-cn-hangzhou.aliyuncs.com/%E8%AF%84%E8%AE%BA.svg"
+                  mode="scaleToFill"
+                />
+                <text class="desc">评论</text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <CommentBox
+          v-show="item.child.length > 0"
+          :child-list="item.child"
+          :reply-user-name="item.users_permissions_user.username"
+          @delete="refresh"
+        />
       </view>
-      <view class="info-contain">
-        <!-- <view class="title"> {{ item.title }}</view> -->
-        <view class="content"> {{ item.content }}</view>
-
-        <view v-if="Array.isArray(item.img) && item.img.length > 0" class="content-img">
-          <view v-for="s in item.img" :key="s" class="img-item">
-            <image class="img" :src="s" mode="scaleToFill" />
-          </view>
-        </view>
-        <view class="content-footer">
-          <view class="like-con" v-if="item.likes.length > 0">
-            <view
-              class="like-item"
-              v-for="like in item.likes.length > 3 ? item.likes.slice(0, 3) : item.likes"
-              :key="like.uuid"
-            >
-              <image class="like-avatar" :src="like.avatar" mode="scaleToFill" />
-            </view>
-            <view class="like-item">
-              <view class="like-avatar num">+{{ item.likes.length }}</view>
-            </view>
-            <view class="text">觉得很赞</view>
-          </view>
-
-          <view class="tools">
-            <view>
-              <image
-                class="like"
-                v-show="item.isLike"
-                src="https://daily-snap.oss-cn-hangzhou.aliyuncs.com/%E5%B7%B2%E7%82%B9%E8%B5%9E.svg"
-                @click="doUnLikePost(item.puid)"
-                mode="scaleToFill"
-              />
-              <image
-                class="like"
-                v-show="!item.isLike"
-                src="https://daily-snap.oss-cn-hangzhou.aliyuncs.com/%E6%9C%AA%E7%82%B9%E8%B5%9E.svg"
-                @click="doLikePost(item.puid)"
-                mode="scaleToFill"
-              />
-              <text class="desc" v-show="item.isLike" @click="doUnLikePost(item.puid)">点赞</text>
-              <text class="desc" v-show="!item.isLike" @click="doLikePost(item.puid)">取消</text>
-            </view>
-
-            <view @click="openBox(item.puid, item.users_permissions_user.username)">
-              <image
-                class="comment"
-                src="https://daily-snap.oss-cn-hangzhou.aliyuncs.com/%E8%AF%84%E8%AE%BA.svg"
-                mode="scaleToFill"
-              />
-              <text class="desc">评论</text>
-            </view>
-          </view>
-        </view>
-      </view>
-
-      <CommentBox
-        v-show="item.child.length > 0"
-        :child-list="item.child"
-        :reply-user-name="item.users_permissions_user.username"
-        @delete="refresh"
-      />
-    </view>
-
-    <!-- 评论框 -->
-    <CommentPop v-show="global.showCommentDialog" @comfirm="refresh" />
-
-    <!-- <view class="add" @click="toAddPage"> 发帖 </view> -->
+    </scroll-view>
+    <!-- 评论框  -->
+    <CommentPop v-if="global.showCommentDialog" @comfirm="refresh" @keyboardchange="keyboardchange" />
   </view>
-  <my-tab-bar :selected="1" />
 </template>
 
 <script setup lang="ts">
-import myTabBar from '@/components/my-tab-bar/index.vue'
 import CommentBox from '@/components/comment-box/index.vue'
 import CommentPop from '@/components/comment-pop/index.vue'
 import { getPostList, deletePostByPuid, likePost, unLikePost } from '@/utils/api'
 import { ICommentItem } from '@/utils/interface'
 import globalStore from '@/stores/global'
 import { formatTime } from '@/utils/tool'
+
+import { UseStatusHeight } from '@/hooks'
+const { safe, height } = UseStatusHeight()
 
 const global = globalStore()
 
@@ -113,7 +114,7 @@ const list = ref<ICommentItem[]>([])
 const markLikes = (posts: ICommentItem[], uuid: string) => {
   posts.forEach(post => {
     // 如果 likes 数组中至少有一个点赞对象的 uuid 与当前用户匹配，则标记 isLike
-    post.isLike = Array.isArray(post.likes) && post.likes.some(like => like.uuid === uuid)
+    post.isLike = Array.isArray(post.likes) && post.likes.some(like => like.id === uuid)
 
     // 处理多层嵌套的子评论
     if (Array.isArray(post.child) && post.child.length > 0) {
@@ -127,7 +128,6 @@ const getList = async () => {
   if (res.code === 0) {
     list.value = res.data
     markLikes(list.value, global.userInfo.uuid)
-    console.log('sss', list.value)
   }
   console.log(res)
 }
@@ -136,7 +136,7 @@ onShow(async () => {
   global.$patch({
     previewTabIndex: 1
   })
-  uni.hideTabBar()
+
   await getList()
 })
 
@@ -146,20 +146,38 @@ const refresh = async (param: any) => {
   if (status) await getList()
 }
 
-const toAddPage = () => {
-  uni.navigateTo({
-    url: '/pages/post/add'
+const keyboardOffset = ref<number>(0)
+const safebottom = ref<number>(0)
+
+onLoad(() => {
+  uni.getSystemInfo({
+    success: res => {
+      safebottom.value = res.safeAreaInsets?.bottom || 0
+    }
   })
+})
+
+const keyboardchange = (height: number) => {
+  keyboardOffset.value = height || 0
 }
 
-const deletePost = async (puid: string) => {
+const safePadding = computed(() => {
+  return safe + height
+})
+
+// const safeBottomPadding = computed(() => {
+//   return keyboardOffset.value + safebottom.value
+// })
+
+const deletePost = async (id: number) => {
   uni.showModal({
     title: '提示',
     content: '确定删除该评论吗？',
     success: async res => {
       if (res.confirm) {
-        console.log('删除')
-        const res = await deletePostByPuid(puid)
+        console.log('删除', id)
+        const res = await deletePostByPuid(id)
+        console.log('dddd', res)
         if (res.code === 0) await getList()
       }
     }
@@ -173,11 +191,12 @@ const openBox = (id: string, username: string) => {
   }
   global.setCommentInfo(param)
   global.openCommentDialog(username)
+  console.log('---------', global.showCommentDialog)
 }
 
-const doLikePost = async (puid: string) => {
+const doLikePost = async (id: number) => {
   const userId = global.userInfo.uuid
-  const res = await likePost(puid, userId)
+  const res = await likePost(id, userId)
   if (res.code === 0) {
     await getList()
     uni.showToast({
@@ -186,9 +205,9 @@ const doLikePost = async (puid: string) => {
     })
   }
 }
-const doUnLikePost = async (puid: string) => {
-  const userId = global.userInfo.uuid
-  const res = await unLikePost(puid, userId)
+const doUnLikePost = async (item: any) => {
+  const target = item.filter((t: any) => t.userId === Number(global.userInfo.uuid))
+  const res = await unLikePost(target[0].thumbId)
   if (res.code === 0) {
     await getList()
     uni.showToast({
@@ -205,26 +224,17 @@ const doUnLikePost = async (puid: string) => {
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
-  padding-top: 24rpx;
-  padding-bottom: calc(130rpx + constant(safe-area-inset-bottom));
-  padding-bottom: calc(130rpx + env(safe-area-inset-bottom));
-
-  .add {
-    width: 200rpx;
-    height: 80rpx;
-    border-radius: 80rpx;
-    background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
-    position: fixed;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 300rpx;
-    z-index: 999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 30rpx;
-    color: #fff;
-    font-weight: 600;
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+  width: 100%;
+  height: 100vh;
+  background: url('https://trial-cdn.esign.cn/upload/6b0284c1-ae00-5732-a5b7-b1e63b75a7b5!!7-22.svg') no-repeat center;
+  background-size: cover;
+  position: relative;
+  // transition: all ease-in 0.1s;
+  .list-container {
+    width: 100%;
+    height: 100%;
   }
 
   .fa {

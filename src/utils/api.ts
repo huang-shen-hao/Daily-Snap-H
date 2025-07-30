@@ -1,6 +1,5 @@
 import { request } from './request'
-import { GD_KEY } from '@/constant/index' //这个就是你在第一步申请的key值
-import { LoginForm, registerForm, weatherForm } from './interface'
+import { LoginForm, registerForm } from './interface'
 import globalStore from '../stores/global'
 
 const { VITE_APP_ID, VITE_APP_SECRET } = import.meta.env
@@ -32,7 +31,6 @@ export const verifyCaptcha = (key: string, answer: string) => {
   return request({
     url: 'api/captcha/verify',
     method: 'POST',
-    fullRes: true,
     header: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
@@ -48,6 +46,7 @@ export const register = (param: registerForm) => {
   return request({
     url: 'api/ds-user/register',
     method: 'POST',
+    fullRes: true,
     header: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
@@ -60,24 +59,31 @@ export const register = (param: registerForm) => {
 // 注册 -> 首页 -> 存用户信息
 export const registerAndsaveUserInfo = async (param: registerForm) => {
   const res = await register(param)
-  const { code, message } = res
-  if (code === 0) {
+
+  const { data, message } = res
+  if (!data) {
     uni.showToast({
       title: message,
-      icon: 'none',
-      duration: 3000
+      icon: 'none'
     })
-    setTimeout(() => {
-      uni.switchTab({ url: '/pages/home/home' })
-    }, 3000)
+    return
   }
-  if (code === 400) {
-    uni.showToast({
-      title: message,
-      icon: 'none',
-      duration: 2000
-    })
-  }
+  const { minimalUser, jwt } = data
+  global.$patch({
+    userInfo: {
+      uuid: minimalUser.id,
+      id: minimalUser.documentId,
+      email: minimalUser.email,
+      username: minimalUser.username,
+      avatar: minimalUser.avatar
+    }
+  })
+  uni.setStorageSync('jwt', jwt)
+  uni.showToast({
+    title: '登录成功',
+    icon: 'none'
+  })
+  uni.switchTab({ url: '/pages/my/my' })
 }
 
 // 用户登录
@@ -86,6 +92,7 @@ export const login = (param: LoginForm) => {
   return request({
     url: 'api/ds-user/login',
     method: 'POST',
+    fullRes: true,
     header: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
@@ -99,33 +106,30 @@ export const login = (param: LoginForm) => {
 // 用户登录 -> 首页 -> 存用户信息
 export const loginAndsaveUserInfo = async (param: LoginForm) => {
   const result = await login(param)
-  if (result.code === 0) {
-    const { data, jwt } = result.data
-    const { documentId, email, username, avatar, uuid } = data
-    global.$patch({
-      userInfo: {
-        uuid: uuid,
-        id: documentId,
-        email,
-        username,
-        avatar
-      }
-    })
-    uni.setStorageSync('jwt', jwt)
+  const { data, message } = result
+  if (!data) {
     uni.showToast({
-      title: '登录成功',
+      title: message,
       icon: 'none'
     })
-
-    uni.switchTab({ url: '/pages/home/home' })
-  } else {
-    const { message } = result
-    uni.showToast({
-      title: message || '登录失败',
-      icon: 'none',
-      duration: 2000
-    })
+    return
   }
+  const { user, jwt } = data
+  global.$patch({
+    userInfo: {
+      uuid: user.id,
+      id: user.documentId,
+      email: user.email,
+      username: user.username,
+      avatar: user.avatar
+    }
+  })
+  uni.setStorageSync('jwt', jwt)
+  uni.showToast({
+    title: '登录成功',
+    icon: 'none'
+  })
+  uni.switchTab({ url: '/pages/my/my' })
 }
 
 // 获取用户信息
@@ -147,6 +151,7 @@ export const updateUserInfo = (id: string, username: string, avatar: string) => 
     header: {
       Authorization: `Bearer ${uni.getStorageSync('jwt')}`
     },
+    fullRes: true,
     data: {
       id,
       username,
@@ -158,7 +163,7 @@ export const updateUserInfo = (id: string, username: string, avatar: string) => 
 // 上传OSS图片
 export const uploadOss = (files: File) => {
   return request({
-    url: 'api/upload/',
+    url: 'api/upload',
     method: 'POST',
     header: {
       'Content-Type': 'multipart/form-data',
@@ -170,23 +175,53 @@ export const uploadOss = (files: File) => {
   })
 }
 
-// 获取天气
-export const getWeather = (param: weatherForm) => {
-  return request(
-    {
-      url: 'simpleWeather/query',
-      method: 'GET',
-      isNormal: false,
-      header: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      data: {
-        ...param
-      }
+// 获取地理位置
+export const wxGetAddress = (longitude: number, latitude: number) => {
+  return request({
+    url: 'api/ds-user/getAddress',
+    method: 'POST',
+    header: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
     },
-    'http://apis.juhe.cn/'
-  )
+    data: {
+      longitude,
+      latitude
+    }
+  })
 }
+
+export const getWeather = (city: string) => {
+  return request({
+    url: 'api/ds-user/getWeather',
+    method: 'POST',
+    header: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    },
+    data: {
+      city
+    }
+  })
+}
+
+// 获取天气
+// export const getWeather = (param: weatherForm) => {
+//   return request(
+//     {
+//       url: 'simpleWeather/query',
+//       method: 'GET',
+//       isNormal: false,
+//       header: {
+//         'Content-Type': 'application/x-www-form-urlencoded'
+//       },
+//       data: {
+//         ...param
+//       }
+//     },
+//     'http://apis.juhe.cn/'
+//   )
+// }
 
 // 获取IP地址
 export const getUserIp = () => {
@@ -197,28 +232,29 @@ export const getUserIp = () => {
 }
 
 // 高德地图逆向经纬度
-export const wxGetAddress = (longitude: number, latitude: number) => {
-  //根据传递进来经纬度进行反解析，调用的是高德给的方法
-  return request(
-    {
-      isNormal: false,
-      url: 'v3/geocode/regeo',
-      method: 'GET',
-      data: {
-        key: GD_KEY,
-        location: `${longitude},${latitude}`
-      }
-    },
+// export const wxGetAddress = (longitude: number, latitude: number) => {
+//   //根据传递进来经纬度进行反解析，调用的是高德给的方法
+//   return request(
+//     {
+//       isNormal: false,
+//       url: 'v3/geocode/regeo',
+//       method: 'GET',
+//       data: {
+//         key: GD_KEY,
+//         location: `${longitude},${latitude}`
+//       }
+//     },
 
-    'https://restapi.amap.com/'
-  )
-}
+//     'https://restapi.amap.com/'
+//   )
+// }
 
 // 获取帖子列表
 export const getPostList = () => {
   return request({
     url: 'api/ds-post/posts?page=1&pageSize=10',
     method: 'GET',
+    fullRes: true,
     header: {
       Authorization: `Bearer ${uni.getStorageSync('jwt')}`
     }
@@ -230,6 +266,7 @@ export const replyPost = (content: string, pid: string, author: string) => {
   return request({
     url: 'api/ds-post/add',
     method: 'POST',
+    fullRes: true,
     header: {
       'Content-Type': 'application/x-www-form-urlencoded',
       Authorization: `Bearer ${uni.getStorageSync('jwt')}`
@@ -244,9 +281,9 @@ export const replyPost = (content: string, pid: string, author: string) => {
 }
 
 // 删除贴
-export const deletePostByPuid = (puid: string) => {
+export const deletePostByPuid = (id: number) => {
   return request({
-    url: `api/ds-post/delete?puid=${puid}`,
+    url: `api/ds-post/delete?id=${id}`,
     method: 'DELETE',
     fullRes: true,
     header: {
@@ -274,7 +311,7 @@ export const addPost = (title: string, content: string, author: string) => {
 }
 
 // 点赞
-export const likePost = (postId: string, userId: string) => {
+export const likePost = (id: number, userId: string) => {
   return request({
     url: 'api/ds-post-thumb/add',
     method: 'POST',
@@ -284,16 +321,16 @@ export const likePost = (postId: string, userId: string) => {
       Authorization: `Bearer ${uni.getStorageSync('jwt')}`
     },
     data: {
-      postId,
+      id,
       userId
     }
   })
 }
 
 // 取消赞
-export const unLikePost = (postId: string, userId: string) => {
+export const unLikePost = (id: number) => {
   return request({
-    url: `api/ds-post-thumb/delete?postId=${postId}&userId=${userId}`,
+    url: `api/ds-post-thumb/delete?id=${id}`,
     method: 'DELETE',
     fullRes: true,
     header: {
@@ -303,10 +340,11 @@ export const unLikePost = (postId: string, userId: string) => {
 }
 
 // 获取用户所有任务
-export const getUserAllTask = () => {
+export const getUserAllTask = (date: string) => {
   return request({
-    url: 'api/ds-task/all',
+    url: `api/ds-task/all?date=${date}`,
     method: 'GET',
+    fullRes: true,
     header: {
       Authorization: `Bearer ${uni.getStorageSync('jwt')}`
     }
@@ -355,7 +393,7 @@ export const UpdateSubTask = (id: string, title: string) => {
 }
 
 // 子任务完成状态
-export const changeSubTaskStatus = (subTid: string, status: boolean) => {
+export const changeSubTaskStatus = (subTid: string, status: boolean, tid: number) => {
   return request({
     url: 'api/ds-sub-task/change',
     method: 'POST',
@@ -364,22 +402,46 @@ export const changeSubTaskStatus = (subTid: string, status: boolean) => {
     },
     data: {
       subTid,
-      status
+      status,
+      tid
     }
   })
 }
 
-// 创建任务
-export const AddTask = (title: string, type: string) => {
+/**
+ *
+ * @param name 任务名
+ * @param date 创建时间 YY-MM-DD
+ * @param color 背景色
+ * @param remind 是否提醒
+ * @param haveRemind 是否已经提醒
+ * @param complement 额外补充
+ * @returns
+ */
+export const addTask = (
+  name: string,
+  date: string,
+  color: string,
+  remind: boolean,
+  remind_time: string,
+  haveRemind = false,
+  complement: any[] = []
+) => {
   return request({
     url: 'api/ds-task/add',
     method: 'POST',
+    fullRes: true,
     header: {
       Authorization: `Bearer ${uni.getStorageSync('jwt')}`
     },
     data: {
-      title,
-      type
+      name,
+      date,
+      color,
+      remind,
+      remind_time,
+      haveRemind,
+      complement
     }
   })
 }
@@ -422,32 +484,55 @@ export const getDailyTaskProcess = (taskId: number, year: string, month: string)
 
 // 菜品接口
 export const getCookCategory = () => {
-  return uni.request({
-    url: `https://www.mxnzp.com/api/cookbook/category?app_secret=${VITE_APP_SECRET}&app_id=${VITE_APP_ID}&category_id=2`,
-    method: 'GET'
+  return request({
+    url: 'api/ds-user/getCookCategory',
+    method: 'GET',
+    header: {
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    }
   })
 }
 
 // 根据菜谱分类id获取菜谱列表
 export const getCookListById = (cid: number, page = 1) => {
-  return uni.request({
-    url: `https://www.mxnzp.com/api/cookbook/list/category?app_secret=${VITE_APP_SECRET}&app_id=${VITE_APP_ID}&category_id=${cid}&page=${page}`,
-    method: 'GET'
+  return request({
+    url: `api/ds-user/getCookListById?category_id=${cid}&page=${page}`,
+    method: 'GET',
+    header: {
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    }
   })
 }
 
 // 根据菜谱id获取菜谱详情
-export const getCookDetailById = (fid: number) => {
-  return uni.request({
-    url: `https://www.mxnzp.com/api/cookbook/details?app_secret=${VITE_APP_SECRET}&app_id=${VITE_APP_ID}&id=${fid}`,
-    method: 'GET'
+export const getCookDetailById = (id: number) => {
+  return request({
+    url: `api/ds-user/getCookDetailById?id=${id}`,
+    method: 'GET',
+    header: {
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    }
   })
 }
 
 // 模糊查询
-export const getSearchData = (key: string, page = 1) => {
-  return uni.request({
-    url: `https://www.mxnzp.com/api/cookbook/search?app_secret=${VITE_APP_SECRET}&app_id=${VITE_APP_ID}&keyword=${key}&page=${page}`,
-    method: 'GET'
+export const getSearchData = (keyword: string, page = 1) => {
+  return request({
+    url: `api/ds-user/getSearchData?keyword=${keyword}&page=${page}`,
+    method: 'GET',
+    header: {
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    }
+  })
+}
+
+// 分页获取壁纸
+export const getWallPages = (page = 1) => {
+  return request({
+    url: `api/ds-wallpaper/getWallPages?pageSize=10&page=${page}`,
+    method: 'GET',
+    header: {
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    }
   })
 }

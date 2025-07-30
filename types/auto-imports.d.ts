@@ -7,6 +7,8 @@ export {}
 declare global {
   const EffectScope: typeof import('vue')['EffectScope']
   const GD_KEY: typeof import('../src/constant/index')['GD_KEY']
+  const PALETTE: typeof import('../src/constant/index')['PALETTE']
+  const UseStatusHeight: typeof import('../src/hooks/index')['UseStatusHeight']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
   const computed: typeof import('vue')['computed']
   const createApp: typeof import('vue')['createApp']
@@ -93,6 +95,7 @@ declare global {
   const useCounterStore: (typeof import('../src/stores/user'))['useCounterStore']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
+  const useFormatYYMMDD: typeof import('../src/hooks/index')['useFormatYYMMDD']
   const useId: typeof import('vue')['useId']
   const useModel: typeof import('vue')['useModel']
   const useSlots: typeof import('vue')['useSlots']
@@ -116,6 +119,8 @@ declare module 'vue' {
   interface ComponentCustomProperties {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly GD_KEY: UnwrapRef<typeof import('../src/constant/index')['GD_KEY']>
+    readonly PALETTE: UnwrapRef<typeof import('../src/constant/index')['PALETTE']>
+    readonly UseStatusHeight: UnwrapRef<typeof import('../src/hooks/index')['UseStatusHeight']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>

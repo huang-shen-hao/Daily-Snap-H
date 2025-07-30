@@ -1,9 +1,9 @@
 <template>
   <view class="my-con">
     <view class="header" @click="changeInfo">
-      <image class="avatar" mode="aspectFit" :src="avatar || userInfo.avatar"></image>
-      <view class="username">{{ username || userInfo.username }}</view>
-      <view class="email">{{ email || userInfo.email }}</view>
+      <image class="avatar" mode="scaleToFill" :src="global.userInfo.avatar"></image>
+      <view class="username">{{ global.userInfo.username }}</view>
+      <view class="email">{{ global.userInfo.email }}</view>
     </view>
 
     <view class="center">
@@ -42,7 +42,7 @@
     </view>
   </view>
 
-  <my-tab-bar :selected="3" />
+  <my-tab-bar :selected="2" />
 </template>
 
 <script setup lang="ts">
@@ -54,16 +54,8 @@ import { getWeather } from '@/utils/api'
 import { type realWeatherType } from '@/utils/interface'
 const global = globalStore()
 
-const { username, email, avatar } = toRefs(global.userInfo) // 响应式
-
-const userInfo = uni.getStorageSync('user')
-
 onShow(() => {
   uni.hideTabBar()
-  global.$patch({
-    previewTabIndex: 2
-  })
-  // console.log('userInfo', userInfo)
 })
 
 const province = ref<string>('***')
@@ -76,21 +68,18 @@ const realWeather = ref<realWeatherType>({
   humidity: '',
   info: '',
   power: '',
-  temperature: '30',
+  temperature: '-',
   wid: ''
 })
 
 const getLocation = async () => {
   const res = await getAddress()
+  console.log(res)
   city.value = res.regeocode.addressComponent.city
   district.value = res.regeocode.addressComponent.district
   province.value = res.regeocode.addressComponent.province
   const area = removeArea(district.value)
-  const param = {
-    city: area,
-    key: '089bd910f53a6b4f1405144db27dfbc2'
-  }
-  const weather = await getWeather(param)
+  const weather = await getWeather(area)
   console.log('sssssssss', weather)
   realWeather.value = weather?.realtime
 }
@@ -103,13 +92,13 @@ const toolList = [
   },
   {
     icon: 'https://iili.io/3S2A0Hg.png',
-    path: '/pages/square/square',
-    name: '记账本'
+    path: '/pages/cook/index',
+    name: '菜谱'
   },
   {
     icon: 'https://iili.io/3S2AcUF.png',
-    path: '/pages/square/square',
-    name: '数据概览'
+    path: '/pages/my/change-info',
+    name: '信息修改'
   }
 ]
 
@@ -132,7 +121,7 @@ onMounted(() => {
 
 const goPage = (path: string, type?: string) => {
   if (type === 'service') return
-  const bar = ['home', 'square', 'my']
+  const bar = ['home', 'my']
   const isBar = bar.some(item => path.includes(item))
   if (isBar) {
     uni.switchTab({

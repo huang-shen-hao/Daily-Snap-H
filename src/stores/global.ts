@@ -8,7 +8,9 @@ const globalStore = defineStore('global', {
       puid: '', //回复帖子的id
       commentReplyName: '', // 评论回复的用户名
       showCommentDialog: false, // 是否显示评论弹窗
+      showTextarea: false, // 任务补充输入框
       isLogin: false, // 是否登录
+      windowHeight: 0,
       userInfo: {
         username: '',
         email: '',
@@ -29,6 +31,9 @@ const globalStore = defineStore('global', {
     closeCommentDialog() {
       this.showCommentDialog = false
       this.commentReplyName = ''
+    },
+    changeTextarea(paylod: boolean) {
+      this.showTextarea = paylod
     },
     setCommentInfo(paylod: any) {
       const { puid, commentReplyName } = paylod

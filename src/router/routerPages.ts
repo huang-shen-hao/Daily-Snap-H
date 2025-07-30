@@ -1,8 +1,39 @@
 module.exports = [
   {
-    path: 'pages/task/daily',
+    path: 'pages/center/center',
     style: {
-      navigationStyle: 'custom'
+      navigationBarTitleText: '探索'
+    }
+  },
+  {
+    path: 'pages/theme/theme',
+    style: {
+      navigationBarTitleText: '壁纸切换'
+    }
+  },
+  {
+    path: 'pages/home/add',
+    style: {
+      navigationStyle: 'custom' //禁用uni-app默认的头部导
+    }
+  },
+  {
+    path: 'pages/square/square',
+    style: {
+      navigationStyle: 'custom' //禁用uni-app默认的头部
+    }
+  },
+
+  {
+    path: 'pages/login/login',
+    style: {
+      navigationStyle: 'custom' //禁用uni-app默认的头部导
+    }
+  },
+  {
+    path: 'pages/demo/index',
+    style: {
+      navigationStyle: 'custom' //禁用uni-app默认的头部导
     }
   },
   {
@@ -11,12 +42,14 @@ module.exports = [
       navigationStyle: 'custom' //禁用uni-app默认的头部导
     }
   },
+
   {
-    path: 'pages/login/login',
+    path: 'pages/task/daily',
     style: {
-      navigationStyle: 'custom' //禁用uni-app默认的头部导
+      navigationStyle: 'custom'
     }
   },
+
   {
     path: 'pages/my/my',
     style: {
@@ -27,6 +60,12 @@ module.exports = [
     path: 'pages/my/change-info',
     style: {
       navigationBarTitleText: '用户信息修改'
+    }
+  },
+  {
+    path: 'pages/my/guide',
+    style: {
+      navigationBarTitleText: '新手指引'
     }
   },
 
@@ -48,12 +87,7 @@ module.exports = [
       navigationBarTitleText: '隐私政策'
     }
   },
-  {
-    path: 'pages/theme/theme',
-    style: {
-      navigationBarTitleText: '主题选择'
-    }
-  },
+
   {
     path: 'pages/note/list',
     style: {
@@ -66,12 +100,7 @@ module.exports = [
       navigationBarTitleText: '添加备忘录'
     }
   },
-  {
-    path: 'pages/square/square',
-    style: {
-      navigationBarTitleText: '广场'
-    }
-  },
+
   {
     path: 'pages/post/add',
     style: {
@@ -86,12 +115,6 @@ module.exports = [
     }
   },
 
-  {
-    path: 'pages/center/center',
-    style: {
-      navigationBarTitleText: '中心'
-    }
-  },
   {
     path: 'pages/cook/index',
     style: {

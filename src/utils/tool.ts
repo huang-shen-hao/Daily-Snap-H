@@ -55,3 +55,18 @@ export const clearInfo = () => {
   uni.removeStorageSync('jwt')
   uni.removeStorageSync('user')
 }
+
+export const formatYYMMDD = (date = new Date()) => {
+  const year = date.getFullYear().toString()
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+// 5min后时间信息
+export const getThresholdTime = (): string => {
+  const d = new Date(Date.now() + 5 * 60 * 1000)
+  const hh = String(d.getHours()).padStart(2, '0')
+  const mm = String(d.getMinutes()).padStart(2, '0')
+  return `${hh}:${mm}`
+}

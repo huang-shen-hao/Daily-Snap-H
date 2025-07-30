@@ -25,7 +25,7 @@ export interface realWeatherType {
 
 // 用户信息
 export interface UsersPermissionsUser {
-  id: string
+  id: string //用户 id
   documentId: string
   username: string
   email: string

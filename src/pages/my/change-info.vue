@@ -18,9 +18,9 @@ const avatar = ref<string>('')
 const username = ref<string>('')
 onLoad(async () => {
   const res = await getUserInfo()
-  documentId.value = res.data.documentId
-  avatar.value = res.data.avatar
-  username.value = res.data.username
+  documentId.value = res.user.documentId
+  avatar.value = res.user.avatar
+  username.value = res.user.username
 })
 
 const submit = async () => {
@@ -38,7 +38,7 @@ const submit = async () => {
     })
     global.$patch({
       userInfo: {
-        uuid: res.data.uuid,
+        uuid: res.data.id,
         id: res.data.documentId,
         email: res.data.email,
         username: res.data.username,
@@ -56,6 +56,38 @@ const chooseAvatar = () => {
     sourceType: ['album', 'camera'],
     success: res => {
       console.log('222222222222', res)
+      const tempFilePaths = res.tempFilePaths
+      if (tempFilePaths.length > 0) {
+        console.log('选中图片本地路径：', tempFilePaths[0])
+        // 选完图后直接调用上传
+        uploadImage(tempFilePaths[0])
+      }
+    }
+  })
+}
+
+// 上传图片
+const uploadImage = (path: string) => {
+  if (!path) {
+    uni.showToast({ title: '请先选取图片', icon: 'none' })
+    return
+  }
+
+  uni.uploadFile({
+    url: 'https://api.liuliuche.top/api/upload/',
+    filePath: path,
+    name: 'files', // 与后端约定的字段名
+    header: {
+      Authorization: `Bearer ${uni.getStorageSync('jwt')}`
+    },
+    formData: {},
+    success: uploadRes => {
+      const data = JSON.parse(uploadRes.data)
+      avatar.value = data[0].url
+    },
+    fail(err) {
+      uni.showToast({ title: '上传请求失败', icon: 'none' })
+      console.error('uploadFile 调用失败：', err)
     }
   })
 }

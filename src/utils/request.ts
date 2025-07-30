@@ -10,6 +10,8 @@ interface RequestConfig extends UniApp.RequestOptions {
 
 const CODE_200 = 200 // 成功状态码
 const CODE_0 = 0 // 成功状态码
+const CODE_401 = 401 // 登录状态过期
+const CODE_403 = 403 // 登录状态过期
 
 const defaultHeaders = {
   'Content-Type': 'application/json',
@@ -55,7 +57,7 @@ export const request = <T = AnyObject>(requestConfig: RequestConfig, customBaseU
           throw new Error('非法的接口返回！')
         }
 
-        if (statusCode === 403) {
+        if (statusCode === CODE_401 || statusCode === CODE_403) {
           // 清空登录状态
           global.$reset()
           // 清空本地存储的jwt
@@ -72,10 +74,12 @@ export const request = <T = AnyObject>(requestConfig: RequestConfig, customBaseU
           return
         }
         if (statusCode === CODE_200 || statusCode === CODE_0) {
-          if (data.status === '1') return resolve(<T>data)
-          if (data.result) return resolve(<T>data.result)
           return resolve(<T>(requestConfig.fullRes ? data : data.data))
         } else {
+          uni.showToast({
+            title: res?.errMsg || '网络异常',
+            icon: 'none'
+          })
           reject(res)
         }
       },

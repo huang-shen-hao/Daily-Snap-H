@@ -27,12 +27,10 @@
       </view>
     </scroll-view>
   </view>
-  <my-tab-bar :selected="2" />
 </template>
 
 <script setup lang="ts">
 import { getCookCategory, getCookListById } from '@/utils/api'
-import myTabBar from '@/components/my-tab-bar/index.vue'
 
 const cookName = ref<string>('')
 
@@ -65,12 +63,18 @@ const changeCookCategory = (id: number) => {
 
 const getCookList = async (cid: number, page: number) => {
   const resC = await getCookListById(cid, page)
-  cookList.value = resC.data.data.list
+  cookList.value = resC.list
 }
 
 onLoad(() => {
   getCookCategory().then(async (res: any) => {
-    cookCategory.value = res.data.data
+    if (!res) {
+      uni.showToast({
+        title: '获取列表失败',
+        icon: 'none'
+      })
+    }
+    cookCategory.value = res
     getCookList(categoryId.value, 1)
   })
 })
@@ -85,20 +89,21 @@ const getMoreFood = async () => {
   loading.value = true
   try {
     const resC = await getCookListById(categoryId.value, currentPage.value)
-    // 兼容后端返回格式
-    const list = Array.isArray(resC?.data?.data?.list) ? resC.data.data.list : []
-    // 如果本次返回没有数据，说明到底了
-    if (list.length === 0) {
-      finished.value = true
-      uni.showToast({
-        title: '没有更多啦~',
-        icon: 'none'
-      })
-    } else {
-      cookList.value = cookList.value.concat(list)
-      currentPage.value++ // 只有有数据时才自增页码
-    }
-    console.log('加载更多', cookList.value)
+    console.log('rrrrrrrr', resC)
+    // // 兼容后端返回格式
+    // const list = Array.isArray(resC?.data?.data?.list) ? resC.data.data.list : []
+    // // 如果本次返回没有数据，说明到底了
+    // if (list.length === 0) {
+    //   finished.value = true
+    //   uni.showToast({
+    //     title: '没有更多啦~',
+    //     icon: 'none'
+    //   })
+    // } else {
+    //   cookList.value = cookList.value.concat(list)
+    //   currentPage.value++ // 只有有数据时才自增页码
+    // }
+    // console.log('加载更多', cookList.value)
   } catch (e) {
     // 错误处理
     console.error('加载失败', e)
@@ -124,10 +129,6 @@ const search = () => {
     url: `/pages/cook/search?key=${cookName.value}`
   })
 }
-
-onShow(() => {
-  uni.hideTabBar()
-})
 
 const share = () => {
   return {
@@ -211,7 +212,7 @@ onShareAppMessage(share)
           width: 100% !important;
           height: 92rpx;
           border-radius: 60rpx;
-        //   background: #dfdfdf !important;
+          //   background: #dfdfdf !important;
           font-size: 28rpx !important;
           padding-left: 40rpx !important;
           &::placeholder {
