@@ -97,46 +97,57 @@ const flod = () => {
  * @param month 月份（1-12）
  * @returns {Array} 日历数据数组，每个元素包含日期、是否当前月、是否今天
  */
+
 const getMonthDays = (year: number, month: number) => {
-  // 获取本月第一天是周几（0-6，0是周日）
-  const firstDay = dayjs(`${year}-${month}-01`)
-  const weekOfFirst = firstDay.day()
-  // 获取本月天数
-  const daysInMonth = firstDay.daysInMonth()
-  // 前面补齐
+  // 1. 准备基础变量
+  // —— 当月第一天的 Day.js 对象
+  const firstOfMonth = dayjs(new Date(year, month - 1, 1))
+  // —— 本月第一天是周几（0-6，0=周日）
+  const weekOfFirst = firstOfMonth.day()
+  // —— 本月总天数
+  const daysInMonth = firstOfMonth.daysInMonth()
+  // —— “今天”的字符串，用于快速比对
+  const todayStr = dayjs().format('YYYY-MM-DD')
+
+  // 2. 前面补齐（当月第一天之前的上月尾部）
   const prevDays = []
   for (let i = weekOfFirst - 1; i >= 0; i--) {
+    const d = firstOfMonth.subtract(i + 1, 'day')
     prevDays.push({
-      date: dayjs(`${year}-${month}-01`)
-        .subtract(i + 1, 'day')
-        .format('YYYY-MM-DD'),
+      date: d.format('YYYY-MM-DD'),
       isCurrentMonth: false,
-      isToday: false
+      isToday: d.format('YYYY-MM-DD') === todayStr
     })
   }
-  // 本月天数
+
+  // 3. 本月天数
   const currentDays = []
   for (let i = 1; i <= daysInMonth; i++) {
-    const dateStr = dayjs(`${year}-${month}-${i}`).format('YYYY-MM-DD')
+    const d = firstOfMonth.date(i)
+    const dateStr = d.format('YYYY-MM-DD')
     currentDays.push({
       date: dateStr,
       isCurrentMonth: true,
-      isToday: dateStr === dayjs().format('YYYY-MM-DD')
+      isToday: dateStr === todayStr
     })
   }
-  // 后面补齐
-  // 计算总格子数（6行*7列=42），减去已用的
-  const total = 42
+
+  // 4. 后面补齐（凑满 6 行 × 7 列 = 42 天）
+  const totalSlots = 42
   const nextDays = []
-  const remain = total - prevDays.length - currentDays.length
-  for (let i = 1; i <= remain; i++) {
+  const slotsUsed = prevDays.length + currentDays.length
+  const slotsToAdd = totalSlots - slotsUsed
+  const lastOfMonth = firstOfMonth.date(daysInMonth) // 当月最后一天
+  for (let i = 1; i <= slotsToAdd; i++) {
+    const d = lastOfMonth.add(i, 'day')
     nextDays.push({
-      date: dayjs(`${year}-${month}-${daysInMonth}`).add(i, 'day').format('YYYY-MM-DD'),
+      date: d.format('YYYY-MM-DD'),
       isCurrentMonth: false,
-      isToday: false
+      isToday: d.format('YYYY-MM-DD') === todayStr
     })
   }
-  // 合并
+
+  // 5. 合并返回
   return [...prevDays, ...currentDays, ...nextDays]
 }
 
@@ -187,6 +198,7 @@ const calendarList = computed(() => {
 
 const changeChooseDate = (date: string) => {
   chooseDate.value = dayjs(date, 'YYYY-MM-DD')
+  current.value = chooseDate.value
   rebuildWeekList()
   weekList.value[currentIndex.value] = getWeekDays(
     chooseDate.value.year(),
@@ -198,78 +210,60 @@ const changeChooseDate = (date: string) => {
 
 const lastIndex = ref<number>(1) // 初始为1
 const currentIndex = ref<number>(1) // 一共是 0 1 2 默认展示 1 下标数据
-// 滑动切换事件
+
+const loadWeek = (idx: number) => {
+  weekList.value[idx] = getWeekDays(chooseDate.value.year(), chooseDate.value.month() + 1, chooseDate.value.date())
+}
+const loadMonth = (idx: number) => {
+  monthList.value[idx] = getMonthDays(current.value.year(), current.value.month() + 1)
+}
+
+// 根据模式和方向刷新数据
+const updateView = (isNext: boolean) => {
+  if (flodStatus.value) {
+    // 周视图：每次 +- 7 天
+    chooseDate.value = isNext ? chooseDate.value.add(7, 'day') : chooseDate.value.subtract(7, 'day')
+    current.value = chooseDate.value
+    loadWeek(currentIndex.value)
+  } else {
+    // 月视图：每次 +- 1 月
+    current.value = isNext ? current.value.add(1, 'month') : current.value.subtract(1, 'month')
+    // 月变更后，默认选中该月第一天
+    chooseDate.value = current.value.startOf('month')
+    rebuildWeekList() // 如果你在月视图下，还要重建周列表
+    loadMonth(currentIndex.value)
+    loadWeek(currentIndex.value) // 月视图下，也可能需要展示周条
+  }
+}
+
+// swipe 事件
 const onSwiperChange = (e: any) => {
   currentIndex.value = e.detail.current
-  // 判断滑动方向
-  if ((lastIndex.value === 2 && currentIndex.value === 0) || currentIndex.value > lastIndex.value) {
-    if (lastIndex.value === 0 && currentIndex.value === 2) {
-      console.log('右滑')
-      if (flodStatus.value) {
-        chooseDate.value = chooseDate.value.subtract(7, 'day')
-        weekList.value[currentIndex.value] = getWeekDays(
-          chooseDate.value.year(),
-          chooseDate.value.month() + 1,
-          chooseDate.value.date()
-        )
-      } else {
-        current.value = current.value.subtract(1, 'month')
-        monthList.value[currentIndex.value] = getMonthDays(current.value.year(), current.value.month() + 1)
-        chooseDate.value = current.value.startOf('month') // 月变化默认选中第一天
-        rebuildWeekList()
-        weekList.value[currentIndex.value] = getWeekDays(
-          chooseDate.value.year(),
-          chooseDate.value.month() + 1,
-          chooseDate.value.date()
-        )
-      }
-    } else {
-      console.log('左滑')
-      if (flodStatus.value) {
-        chooseDate.value = chooseDate.value.add(7, 'day')
-        weekList.value[currentIndex.value] = getWeekDays(
-          chooseDate.value.year(),
-          chooseDate.value.month() + 1,
-          chooseDate.value.date()
-        )
-      } else {
-        current.value = current.value.add(1, 'month')
-        monthList.value[currentIndex.value] = getMonthDays(current.value.year(), current.value.month() + 1)
-        chooseDate.value = current.value.startOf('month') // 月变化默认选中第一天
 
-        rebuildWeekList()
-        weekList.value[currentIndex.value] = getWeekDays(
-          chooseDate.value.year(),
-          chooseDate.value.month() + 1,
-          chooseDate.value.date()
-        )
-        console.log('0000000000000000', currentIndex.value, weekList.value)
-      }
-    }
-  } else if (currentIndex.value < lastIndex.value) {
-    console.log('右滑')
-    if (flodStatus.value) {
-      chooseDate.value = chooseDate.value.subtract(7, 'day')
-      weekList.value[currentIndex.value] = getWeekDays(
-        chooseDate.value.year(),
-        chooseDate.value.month() + 1,
-        chooseDate.value.date()
-      )
-    } else {
-      current.value = current.value.subtract(1, 'month')
-      monthList.value[currentIndex.value] = getMonthDays(current.value.year(), current.value.month() + 1)
-      chooseDate.value = current.value.startOf('month') // 月变化默认选中第一天
-      rebuildWeekList()
-      weekList.value[currentIndex.value] = getWeekDays(
-        chooseDate.value.year(),
-        chooseDate.value.month() + 1,
-        chooseDate.value.date()
-      )
-    }
+  // 计算环形滑动差值：0=未动/中间→中间，1=向右前进，2=向左后退
+  const diff = (currentIndex.value - lastIndex.value + 3) % 3
+  let isNext
+  if (diff === 1) {
+    // 正常向「右」或从末尾→头部
+    isNext = true
+  } else if (diff === 2) {
+    // 正常向「左」或从头部→末尾，等同于向后退 1 步
+    isNext = false
+  } else {
+    // 无移动或从中间来回
+    isNext = null
   }
-  console.log('data', flodStatus.value ? weekList.value[currentIndex.value] : monthList.value[currentIndex.value])
-  lastIndex.value = currentIndex.value // 重置为中间
 
+  if (isNext !== null) {
+    updateView(isNext)
+  }
+
+  // 重置索引为中间，以便下次继续用环形差值判断
+  lastIndex.value = currentIndex.value
+
+  console.log('当前数据：', flodStatus.value ? weekList.value[currentIndex.value] : monthList.value[currentIndex.value])
+
+  // 拉取任务或其他操作
   getTasks(chooseDate.value.format('YYYY-MM-DD'))
 }
 
@@ -325,7 +319,6 @@ const getTasks = async (date: string) => {
 const refreshData = (date: string) => {
   current.value = dayjs(date)
   chooseDate.value = dayjs(date)
-  console.log('KKKKKKKKKKKKKKKKK', date, swiperIndex.value, currentIndex.value, monthList.value)
   getTasks(date)
   rebuildmonthList()
   rebuildWeekList()
@@ -380,13 +373,14 @@ const goAdd = () => {
 }
 .calendar-con {
   background-image: linear-gradient(120deg, rgba(59, 115, 211, 0.1) 0%, rgba(147, 221, 255, 0.2) 100%);
-  height: 660rpx;
+  height: 760rpx;
   position: relative;
   transition: all 0.2s ease-in;
   overflow: hidden;
+  box-sizing: border-box;
 
   &.flod {
-    height: 240rpx;
+    height: 360rpx;
   }
   .back {
     position: absolute;
@@ -423,7 +417,7 @@ const goAdd = () => {
     // background: #c2e9fb;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
   }
   .calendar-week {
     width: 100%;
@@ -484,7 +478,7 @@ const goAdd = () => {
 }
 
 .task-list {
-  height: calc(100vh - 720rpx);
+  height: calc(100vh - 760rpx);
 
   width: 100%;
   background-size: cover !important;
@@ -496,7 +490,7 @@ const goAdd = () => {
   // grid-auto-rows: 200rpx;
 
   &.flod {
-    height: calc(100vh - 340rpx);
+    height: calc(100vh - 360rpx);
   }
   .task-item {
     background: #fff;
