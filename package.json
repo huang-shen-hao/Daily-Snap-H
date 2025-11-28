@@ -21,6 +21,7 @@
     "@dcloudio/uni-mp-weixin": "3.0.0-3090920231225001",
     "@dcloudio/uni-ui": "^1.4.27",
     "@tsconfig/node18": "2.0.1",
+    "@uni-helper/uni-types": "^1.0.0-alpha.6",
     "@vue/compiler-sfc": "^3.3.4",
     "dayjs": "^1.11.13",
     "mp-html": "^2.5.1",

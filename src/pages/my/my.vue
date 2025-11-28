@@ -35,7 +35,7 @@
     </view>
 
     <view class="foot">
-      <view class="foot-item" v-for="item in footList" :key="item.name" @click="goPage(item.path, item.type)">
+      <view class="foot-item" v-for="item in footList" :key="item.name" @click="goPage(item.path)">
         <button v-if="item.type === 'service'" class="name" open-type="contact">{{ item.name }}</button>
         <view v-else class="name">{{ item.name }}</view>
       </view>
@@ -119,19 +119,10 @@ onMounted(() => {
   getLocation()
 })
 
-const goPage = (path: string, type?: string) => {
-  if (type === 'service') return
-  const bar = ['home', 'my']
-  const isBar = bar.some(item => path.includes(item))
-  if (isBar) {
-    uni.switchTab({
-      url: path
-    })
-  } else {
-    uni.navigateTo({
-      url: path
-    })
-  }
+const goPage = (path: string) => {
+  uni.navigateTo({
+    url: path
+  })
 }
 
 const changeInfo = () => {

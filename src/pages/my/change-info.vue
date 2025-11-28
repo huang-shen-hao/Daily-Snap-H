@@ -86,7 +86,7 @@ const uploadImage = (path: string) => {
       avatar.value = data[0].url
     },
     fail(err) {
-      uni.showToast({ title: '上传请求失败', icon: 'none' })
+      uni.showToast({ title: err.errMsg, icon: 'none' })
       console.error('uploadFile 调用失败：', err)
     }
   })
